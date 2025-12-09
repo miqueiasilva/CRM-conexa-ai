@@ -65,7 +65,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ setPage }) => {
                         <p>A IA é treinada com base nas informações que você fornece durante a criação do agente, incluindo o perfil da sua empresa, as etapas do fluxo de conversa e a base de conhecimento (perguntas e respostas). Ela utiliza essas informações para entender o contexto e formular respostas precisas e personalizadas.</p>
                     </FaqItem>
                     <FaqItem question="Posso ter mais de um número de WhatsApp conectado?">
-                        <p>Sim! Nossa plataforma permite que você conecte e gerencie múltiplas instâncias do WhatsApp. Você pode adicionar novas contas na página de "Integrações > WhatsApp" e atribuir agentes de IA específicos para cada número, se desejar.</p>
+                        <p>Sim! Nossa plataforma permite que você conecte e gerencie múltiplas instâncias do WhatsApp. Você pode adicionar novas contas na página de "Integrações &gt; WhatsApp" e atribuir agentes de IA específicos para cada número, se desejar.</p>
                     </FaqItem>
                     <FaqItem question="Meus dados e conversas estão seguros?">
                         <p>Absolutamente. A segurança é nossa prioridade máxima. Todas as conversas são criptografadas e seus dados são armazenados em servidores seguros, seguindo as melhores práticas de proteção de dados do mercado. Não compartilhamos suas informações com terceiros.</p>
