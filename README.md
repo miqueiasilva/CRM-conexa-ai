@@ -1,11 +1,28 @@
-<div align="center">
+# Conexa.AI - CRM & Atendimento Inteligente
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Painel de controle inteligente para centralizar atendimentos via WhatsApp, qualificar leads com IA, agendar serviços e gerar relatórios de vendas.
 
-  <h1>Built with AI Studio</h2>
+## 🚀 Tecnologias
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- **Frontend:** React + TypeScript + Vite
+- **Estilização:** Tailwind CSS
+- **IA:** Google Gemini API
+- **Gráficos:** Recharts
+- **Ícones:** Lucide React
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## 🛠️ Como rodar o projeto
 
-</div>
+1. Clone o repositório.
+2. Crie um arquivo `.env` na raiz com sua chave API: `VITE_API_KEY=sua_chave_gemini`.
+3. Instale as dependências:
+   ```bash
+   npm install
+   ```
+4. Rode o projeto:
+   ```bash
+   npm run dev
+   ```
+
+## ☁️ Deploy
+
+Este projeto está pronto para deploy na **Vercel**. Basta conectar seu repositório GitHub e adicionar a variável de ambiente `VITE_API_KEY`.
