@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-// import './index.css'; // Removido para evitar erro no preview sem build system
+import './index.css'; // Importação ativa para o build do Vite na Vercel
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
