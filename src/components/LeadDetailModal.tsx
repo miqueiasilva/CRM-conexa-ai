@@ -89,7 +89,11 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
     : 'R$ 0,00';
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
+    <div 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4" 
+        style={{ zIndex: 9999 }}
+        onClick={onClose}
+    >
       <div className="bg-card rounded-xl shadow-2xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-100" onClick={e => e.stopPropagation()}>
         
         {/* Header */}

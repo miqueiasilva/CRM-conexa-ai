@@ -92,7 +92,7 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                 <p className="text-text-secondary text-sm">Gerencie seus leads e oportunidades.</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto z-10">
                 {/* Search Input with Clear Button */}
                 <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors" size={18} />
@@ -118,7 +118,7 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                     <button 
                         type="button"
                         onClick={handleOpenAddModal}
-                        className="flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium cursor-pointer"
+                        className="relative z-20 flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium cursor-pointer"
                     >
                         <Plus size={18} className="mr-2"/>
                         Novo Lead
@@ -158,7 +158,11 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
 
        {/* Add Lead Modal Overlay */}
        {isAddModalOpen && (
-           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={handleCloseAddModal}>
+           <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4" 
+                style={{ zIndex: 9999 }}
+                onClick={handleCloseAddModal}
+            >
                <div className="bg-card rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all scale-100 relative" onClick={e => e.stopPropagation()}>
                    <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
                        <h2 className="text-xl font-bold text-text-primary">Cadastrar Novo Lead</h2>
