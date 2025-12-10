@@ -69,6 +69,25 @@ export async function updateLeadStatus(id: number, status: LeadStatus): Promise<
   return true;
 }
 
+export async function updateLead(lead: Lead): Promise<boolean> {
+  const { error } = await supabase
+    .from('leads')
+    .update({
+      name: lead.name,
+      whatsapp: lead.whatsapp,
+      origin: lead.origin,
+      value: lead.value,
+      last_contact: lead.lastContact
+    })
+    .eq('id', lead.id);
+
+  if (error) {
+    console.error('Erro ao atualizar lead:', error);
+    return false;
+  }
+  return true;
+}
+
 export async function deleteLeadFromDB(id: number): Promise<boolean> {
   const { error } = await supabase
     .from('leads')

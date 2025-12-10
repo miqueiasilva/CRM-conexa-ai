@@ -23,6 +23,7 @@ import {
   getLeads, 
   createLead, 
   updateLeadStatus, 
+  updateLead,
   deleteLeadFromDB, 
   getAppointments, 
   createAppointment 
@@ -114,6 +115,18 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUpdateLead = async (updatedLead: Lead) => {
+    // 1. Update in DB
+    const success = await updateLead(updatedLead);
+    
+    // 2. Update UI
+    if (success) {
+      setLeads(prevLeads => prevLeads.map(lead => 
+        lead.id === updatedLead.id ? updatedLead : lead
+      ));
+    }
+  };
+
   const handleDeleteLead = async (leadId: number) => {
     // 1. Delete from DB
     const success = await deleteLeadFromDB(leadId);
@@ -182,7 +195,13 @@ const App: React.FC = () => {
       case 'DashboardCRM':
         return <Dashboard leads={leads} appointments={appointments} />;
       case 'Quadro':
-        return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} />;
+        return <SalesFunnel 
+          leads={leads} 
+          onLeadDrop={handleLeadDrop} 
+          addLead={handleAddLead} 
+          onUpdateLead={handleUpdateLead} 
+          onDeleteLead={handleDeleteLead} 
+        />;
       case 'Simulador':
         return <ChatInterface addLead={handleAddLead} addAppointment={handleAddAppointment} />;
       case 'Criação de Agente':
