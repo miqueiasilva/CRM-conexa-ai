@@ -29,6 +29,7 @@ import {
   getAppointments, 
   createAppointment 
 } from './services/crmService';
+import { supabase } from './services/supabaseClient';
 
 const initialAgent: AgentData = {
     type: 'IA de SDR',
@@ -63,10 +64,8 @@ const initialAgent: AgentData = {
 
 
 const App: React.FC = () => {
-  // Initialize state from localStorage if available
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('conexa_auth') === 'true';
-  });
+  // Authentication state managed by Supabase
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
   const [activePage, setActivePage] = useState(() => {
     return localStorage.getItem('conexa_active_page') || 'Início';
@@ -79,6 +78,23 @@ const App: React.FC = () => {
   
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
+
+  // Check Supabase Auth State on Mount
+  useEffect(() => {
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    // Listen for auth changes (login, logout, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Save active page to localStorage whenever it changes
   useEffect(() => {
@@ -114,13 +130,12 @@ const App: React.FC = () => {
     }
   }, [activePage]);
 
+  // This function is passed to LoginPage but Supabase handles the state change automatically via useEffect
   const handleLogin = () => {
-      setIsAuthenticated(true);
-      localStorage.setItem('conexa_auth', 'true');
+      // No manual state update needed, subscription handles it
   };
 
   const handleAddLead = async (leadData: Omit<Lead, 'id' | 'status'>) => {
-    // 1. Create in DB
     const newLead = await createLead({
       ...leadData,
       status: LeadStatus.CAPTURADOS,
@@ -128,17 +143,13 @@ const App: React.FC = () => {
       lastContact: 'Agora'
     });
 
-    // 2. Update UI
     if (newLead) {
       setLeads(prevLeads => [newLead, ...prevLeads]);
     }
   };
 
   const handleUpdateLead = async (updatedLead: Lead) => {
-    // 1. Update in DB
     const success = await updateLead(updatedLead);
-    
-    // 2. Update UI
     if (success) {
       setLeads(prevLeads => prevLeads.map(lead => 
         lead.id === updatedLead.id ? updatedLead : lead
@@ -147,10 +158,7 @@ const App: React.FC = () => {
   };
 
   const handleDeleteLead = async (leadId: number) => {
-    // 1. Delete from DB
     const success = await deleteLeadFromDB(leadId);
-    
-    // 2. Update UI
     if (success) {
       setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
     }
@@ -164,15 +172,12 @@ const App: React.FC = () => {
   };
 
   const handleLeadDrop = async (leadId: number, newStatus: LeadStatus) => {
-    // Optimistic Update (Update UI immediately)
     setLeads(prevLeads => prevLeads.map(lead =>
       lead.id === leadId ? { ...lead, status: newStatus } : lead
     ));
 
-    // Update DB
     const success = await updateLeadStatus(leadId, newStatus);
     if (!success) {
-      // Revert if failed (optional, simplified here)
       console.error("Falha ao atualizar status no banco");
     }
   };
@@ -187,12 +192,21 @@ const App: React.FC = () => {
     setIsEditingAgent(false);
   };
   
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('conexa_auth');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('conexa_active_page');
     setActivePage('Início');
+    // State updates automatically via subscription
   };
+
+  // Show nothing or a loader while checking auth status
+  if (isAuthenticated === null) {
+      return (
+        <div className="flex h-screen items-center justify-center bg-background">
+            <Loader2 size={48} className="animate-spin text-primary" />
+        </div>
+      );
+  }
 
   if (!isAuthenticated) {
     return <LoginPage onLogin={handleLogin} />;
