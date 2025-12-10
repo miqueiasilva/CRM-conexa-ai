@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lead, LeadStatus } from '../types';
 import { FUNNEL_STAGES } from '../constants';
 import KanbanColumn from './KanbanColumn';
@@ -24,6 +24,17 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadWhatsapp, setNewLeadWhatsapp] = useState('');
   const [newLeadOrigin, setNewLeadOrigin] = useState('Manual');
+
+  // Atualiza o lead selecionado se a lista de leads mudar (ex: após edição)
+  useEffect(() => {
+    if (selectedLead) {
+        const updatedLead = leads.find(l => l.id === selectedLead.id);
+        // Se encontrou uma versão mais nova do lead, atualiza o modal
+        if (updatedLead && updatedLead !== selectedLead) {
+            setSelectedLead(updatedLead);
+        }
+    }
+  }, [leads, selectedLead]);
 
   const handleLeadClick = (lead: Lead) => {
     setSelectedLead(lead);
@@ -105,8 +116,9 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                 <div className="flex space-x-2">
                     {/* Quick Action Button */}
                     <button 
+                        type="button"
                         onClick={handleOpenAddModal}
-                        className="flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium"
+                        className="flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium cursor-pointer"
                     >
                         <Plus size={18} className="mr-2"/>
                         Novo Lead
@@ -134,18 +146,20 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
         ))}
       </div>
 
-       {/* Detail Modal */}
-       <LeadDetailModal 
-            lead={selectedLead} 
-            onClose={handleCloseModal} 
-            onDelete={onDeleteLead}
-            onUpdate={onUpdateLead}
-       />
+       {/* Detail Modal - Renderizado condicionalmente para garantir atualização */}
+       {selectedLead && (
+           <LeadDetailModal 
+                lead={selectedLead} 
+                onClose={handleCloseModal} 
+                onDelete={onDeleteLead}
+                onUpdate={onUpdateLead}
+           />
+       )}
 
        {/* Add Lead Modal Overlay */}
        {isAddModalOpen && (
-           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4" onClick={handleCloseAddModal}>
-               <div className="bg-card rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all scale-100" onClick={e => e.stopPropagation()}>
+           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={handleCloseAddModal}>
+               <div className="bg-card rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all scale-100 relative" onClick={e => e.stopPropagation()}>
                    <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
                        <h2 className="text-xl font-bold text-text-primary">Cadastrar Novo Lead</h2>
                        <button onClick={handleCloseAddModal} className="text-text-secondary hover:text-text-primary hover:bg-light p-1 rounded-full transition-colors" disabled={isSubmitting}>

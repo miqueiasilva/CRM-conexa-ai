@@ -89,7 +89,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
     : 'R$ 0,00';
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[100] p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
       <div className="bg-card rounded-xl shadow-2xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-100" onClick={e => e.stopPropagation()}>
         
         {/* Header */}
@@ -106,6 +106,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                             onChange={(e) => setEditedName(e.target.value)}
                             className="text-xl font-bold text-text-primary bg-white border-2 border-primary/20 rounded p-1.5 w-full focus:border-primary outline-none"
                             placeholder="Nome do Lead"
+                            autoFocus
                         />
                     ) : (
                         <h2 className="text-2xl font-bold text-text-primary leading-tight">{lead.name}</h2>
