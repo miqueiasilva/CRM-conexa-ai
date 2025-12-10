@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -62,8 +63,14 @@ const initialAgent: AgentData = {
 
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activePage, setActivePage] = useState('Início');
+  // Initialize state from localStorage if available
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('conexa_auth') === 'true';
+  });
+  
+  const [activePage, setActivePage] = useState(() => {
+    return localStorage.getItem('conexa_active_page') || 'Início';
+  });
   
   // Data states
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -72,6 +79,13 @@ const App: React.FC = () => {
   
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
+
+  // Save active page to localStorage whenever it changes
+  useEffect(() => {
+    if (isAuthenticated) {
+        localStorage.setItem('conexa_active_page', activePage);
+    }
+  }, [activePage, isAuthenticated]);
 
   // Fetch initial data from Supabase
   useEffect(() => {
@@ -99,6 +113,11 @@ const App: React.FC = () => {
       setIsEditingAgent(false);
     }
   }, [activePage]);
+
+  const handleLogin = () => {
+      setIsAuthenticated(true);
+      localStorage.setItem('conexa_auth', 'true');
+  };
 
   const handleAddLead = async (leadData: Omit<Lead, 'id' | 'status'>) => {
     // 1. Create in DB
@@ -170,10 +189,13 @@ const App: React.FC = () => {
   
   const handleLogout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem('conexa_auth');
+    localStorage.removeItem('conexa_active_page');
+    setActivePage('Início');
   };
 
   if (!isAuthenticated) {
-    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
+    return <LoginPage onLogin={handleLogin} />;
   }
 
   // Loading Screen while fetching initial data
