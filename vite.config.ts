@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
+    strictPort: true, // Garante que se a porta 3000 estiver ocupada, o servidor avisa em vez de mudar
   },
   build: {
     outDir: 'dist',
