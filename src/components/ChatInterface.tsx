@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { GenerateContentResponse } from '@google/genai';
 import { ChatMessage, Lead, Appointment, FunctionCall } from '../types';

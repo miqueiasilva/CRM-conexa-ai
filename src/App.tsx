@@ -282,7 +282,7 @@ const Dashboard: React.FC<DashboardProps> = ({ leads, appointments }) => {
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
     const activeAppointments = appointments.length;
 
-    const funnelCounts = FUNNEL_STAGES.reduce((acc, stage) => {
+    const funnelCounts = FUNNEL_STAGES.reduce((acc: Record<LeadStatus, number>, stage) => {
         acc[stage] = leads.filter(lead => lead.status === stage).length;
         return acc;
     }, {} as Record<LeadStatus, number>);

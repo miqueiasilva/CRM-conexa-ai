@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Zap, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';

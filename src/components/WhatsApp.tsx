@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, QrCode, Loader2, RefreshCw, Plus, Info } from 'lucide-react';
 import QRCode from 'qrcode';

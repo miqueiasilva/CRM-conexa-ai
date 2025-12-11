@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Lead } from '../types';
 import { Clock, DollarSign } from 'lucide-react';

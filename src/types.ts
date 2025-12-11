@@ -1,4 +1,4 @@
-// FIX: Removed self-import of `LeadStatus` which was causing a conflict with its own declaration.
+
 export enum LeadStatus {
   CAPTURADOS = 'Capturados',
   ATENDIDOS = 'Atendidos',
