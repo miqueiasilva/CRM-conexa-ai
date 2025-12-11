@@ -1,5 +1,6 @@
+
 import { supabase } from './supabaseClient';
-import { Lead, Appointment, LeadStatus } from '@/types';
+import { Lead, Appointment, LeadStatus } from '../types';
 
 // --- LEADS ---
 

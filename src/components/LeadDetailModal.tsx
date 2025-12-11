@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Lead } from '@/types';
+import { Lead } from '../types';
 import { X, Phone, MapPin, Tag, Trash2, AlertTriangle, Calendar, DollarSign, Save, Edit2, Loader2 } from 'lucide-react';
 
 interface LeadDetailModalProps {

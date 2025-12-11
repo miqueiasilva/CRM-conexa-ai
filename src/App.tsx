@@ -1,24 +1,25 @@
+
 import React, { useState, useEffect } from 'react';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
-import StatCard from '@/components/StatCard';
-import SalesFunnel from '@/components/SalesFunnel';
-import AppointmentsList from '@/components/AppointmentsList';
-import LeadSourceChart from '@/components/LeadSourceChart';
-import ChatInterface from '@/components/ChatInterface';
-import { Lead, Appointment, LeadStatus, AgentData } from '@/types';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import StatCard from './components/StatCard';
+import SalesFunnel from './components/SalesFunnel';
+import AppointmentsList from './components/AppointmentsList';
+import LeadSourceChart from './components/LeadSourceChart';
+import ChatInterface from './components/ChatInterface';
+import { Lead, Appointment, LeadStatus, AgentData } from './types';
 import { BarChart, Users, DollarSign, MessageCircle, Loader2 } from 'lucide-react';
-import AgentCreator from '@/components/AgentCreator';
-import AgentInfoPage from '@/components/AgentInfoPage';
-import WhatsApp from '@/components/WhatsApp';
-import MessagePage from '@/components/MessagePage';
-import Suggestions from '@/components/Suggestions';
-import ChatListPage from '@/components/ChatListPage';
-import HomePage from '@/components/HomePage';
-import AgentEditPage from '@/components/AgentEditPage';
-import LoginPage from '@/components/LoginPage';
-import HelpPage from '@/components/HelpPage';
-import { FUNNEL_STAGES } from '@/constants';
+import AgentCreator from './components/AgentCreator';
+import AgentInfoPage from './components/AgentInfoPage';
+import WhatsApp from './components/WhatsApp';
+import MessagePage from './components/MessagePage';
+import Suggestions from './components/Suggestions';
+import ChatListPage from './components/ChatListPage';
+import HomePage from './components/HomePage';
+import AgentEditPage from './components/AgentEditPage';
+import LoginPage from './components/LoginPage';
+import HelpPage from './components/HelpPage';
+import { FUNNEL_STAGES } from './constants';
 import { 
   getLeads, 
   createLead, 
@@ -27,8 +28,8 @@ import {
   deleteLeadFromDB, 
   getAppointments, 
   createAppointment 
-} from '@/services/crmService';
-import { supabase } from '@/services/supabaseClient';
+} from './services/crmService';
+import { supabase } from './services/supabaseClient';
 
 const initialAgent: AgentData = {
     type: 'IA de SDR',
@@ -281,10 +282,11 @@ const Dashboard: React.FC<DashboardProps> = ({ leads, appointments }) => {
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
     const activeAppointments = appointments.length;
 
-    const funnelCounts = FUNNEL_STAGES.reduce((acc: Record<LeadStatus, number>, stage: LeadStatus) => {
+    // Explicitly typing the accumulator to avoid implicit any error
+    const funnelCounts = FUNNEL_STAGES.reduce((acc: Record<string, number>, stage: LeadStatus) => {
         acc[stage] = leads.filter(lead => lead.status === stage).length;
         return acc;
-    }, {} as Record<LeadStatus, number>);
+    }, {} as Record<string, number>);
 
     return (
         <div>

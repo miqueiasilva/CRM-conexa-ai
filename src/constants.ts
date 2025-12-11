@@ -1,3 +1,4 @@
+
 import { LeadStatus } from './types';
 
 export const FUNNEL_STAGES: LeadStatus[] = [

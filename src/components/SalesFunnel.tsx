@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import { Lead, LeadStatus } from '@/types';
-import { FUNNEL_STAGES } from '@/constants';
+import { Lead, LeadStatus } from '../types';
+import { FUNNEL_STAGES } from '../constants';
 import KanbanColumn from './KanbanColumn';
 import { Plus, MessageSquare, Download, Search, X, Loader2 } from 'lucide-react';
 import LeadDetailModal from './LeadDetailModal';
