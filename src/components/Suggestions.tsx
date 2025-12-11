@@ -16,8 +16,6 @@ const Suggestions: React.FC<SuggestionsProps> = ({ onClose }) => {
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
-    // Em um aplicativo real, isso poderia acionar um fluxo para implementar o recurso
-    // ou enviar dados de análise. Por enquanto, um alerta é suficiente.
     alert(`Sugestão clicada: "${suggestion}". Nossa equipe irá analisar esta funcionalidade!`);
   };
 

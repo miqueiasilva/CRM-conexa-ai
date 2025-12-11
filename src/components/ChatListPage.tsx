@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Send, Paperclip, MoreVertical } from 'lucide-react';
 
-// Mock data
 const chatListData = [
     { id: 1, name: 'Ana Silva', lastMessage: 'Olá! Tenho interesse no serviço...', time: '10:42', unread: 2, avatar: 'AS' },
     { id: 3, name: 'Carla Dias', lastMessage: 'Confirmado! Te vejo amanhã.', time: 'Ontem', unread: 0, avatar: 'CD' },
@@ -66,7 +65,6 @@ const ChatListPage: React.FC = () => {
 
     return (
         <div className="flex h-[calc(100vh-90px)] bg-card rounded-lg shadow-sm border border-border">
-            {/* Chat List Panel */}
             <div className="w-1/3 border-r border-border flex flex-col">
                 <div className="p-4 border-b border-border flex-shrink-0">
                     <h2 className="text-xl font-bold text-text-primary">Mensagens</h2>
@@ -100,11 +98,9 @@ const ChatListPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Chat View Panel */}
             <div className="w-2/3 flex flex-col bg-light">
                 {selectedChat ? (
                     <>
-                        {/* Header */}
                         <div className="flex items-center justify-between p-3 border-b border-border bg-card flex-shrink-0">
                             <div className="flex items-center">
                                 <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-md flex-shrink-0 mr-3">
@@ -120,7 +116,6 @@ const ChatListPage: React.FC = () => {
                             </button>
                         </div>
                         
-                        {/* Messages */}
                         <div className="flex-grow p-6 overflow-y-auto">
                              <div className="space-y-4">
                                 {messages.map(msg => (
@@ -135,7 +130,6 @@ const ChatListPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Input */}
                         <div className="p-4 bg-card border-t border-border flex-shrink-0">
                             <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                                 <button type="button" className="text-text-secondary hover:text-primary p-2 rounded-full hover:bg-light"><Paperclip size={20} /></button>

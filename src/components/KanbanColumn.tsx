@@ -10,20 +10,18 @@ interface KanbanColumnProps {
   onLeadClick: (lead: Lead) => void;
 }
 
-// Improved color scheme for better semantic meaning: yellow for new, blue for in-progress, green for success.
 const statusColors: Record<LeadStatus, { bg: string; text: string; border: string }> = {
   [LeadStatus.CAPTURADOS]: { bg: 'bg-yellow-50', text: 'text-yellow-800', border: 'border-yellow-200' },
   [LeadStatus.ATENDIDOS]: { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
   [LeadStatus.VENDAS_REALIZADAS]: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
 };
 
-
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, leads, onLeadDrop, onLeadClick }) => {
   const [isOver, setIsOver] = useState(false);
   const colors = statusColors[title] || { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200' };
   
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Necessário para permitir o drop
+    e.preventDefault();
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -44,7 +42,6 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, leads, onLeadDrop, o
     e.preventDefault();
     setIsOver(false);
   };
-
 
   return (
     <div 

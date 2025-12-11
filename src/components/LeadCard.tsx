@@ -12,7 +12,6 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onLeadClick }) => {
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData('leadId', lead.id.toString());
     e.dataTransfer.effectAllowed = 'move';
-    // Improved visual feedback: reduce opacity and scale down slightly
     e.currentTarget.style.opacity = '0.5';
     e.currentTarget.style.transform = 'scale(0.95)';
   };
@@ -22,7 +21,6 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onLeadClick }) => {
     e.currentTarget.style.transform = 'scale(1)';
   };
 
-  // Format currency properly
   const formattedValue = lead.value 
     ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(lead.value)
     : 'R$ 0,00';

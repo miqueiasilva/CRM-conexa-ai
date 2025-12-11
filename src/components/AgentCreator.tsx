@@ -114,7 +114,7 @@ const AgentCreator: React.FC<AgentCreatorProps> = ({ agentToEdit, onSave }) => {
             case 4:
                  return agentData.flowSteps.every(step => step.instruction.trim() !== '');
             case 5:
-                return true; // Treinamento é opcional para finalizar
+                return true; 
             default:
                 return false;
         }
@@ -151,7 +151,6 @@ const AgentCreator: React.FC<AgentCreatorProps> = ({ agentToEdit, onSave }) => {
             <h1 className="text-3xl font-bold text-text-primary mb-2">Criação de Agente</h1>
             <p className="text-text-secondary mb-8">Siga os passos para configurar seu assistente de IA.</p>
             
-            {/* Stepper */}
             <div className="flex items-center justify-between mb-12">
                 {STEPS.map((step, index) => {
                     const stepNumber = index + 1;
@@ -172,10 +171,8 @@ const AgentCreator: React.FC<AgentCreatorProps> = ({ agentToEdit, onSave }) => {
                 })}
             </div>
             
-            {/* Step Content */}
             <div>{renderStepContent()}</div>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center mt-12 border-t border-border pt-6">
                 <button
                     onClick={prevStep}
@@ -212,7 +209,7 @@ const Step1 = ({ agentData, setAgentData, nextStep }: { agentData: AgentData, se
     
     const handleSelectType = (type: string) => {
         setAgentData(prev => ({...prev, type}));
-        setTimeout(nextStep, 300); // Avança para o próximo passo após uma pequena pausa
+        setTimeout(nextStep, 300);
     };
 
     const agentTypes = [

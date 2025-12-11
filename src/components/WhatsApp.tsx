@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { X, QrCode, Loader2, RefreshCw, Plus, Info } from 'lucide-react';
 import QRCode from 'qrcode';
 
-// Connection interface to manage multiple WhatsApp accounts
 interface Connection {
     id: number;
     number: string;
@@ -11,7 +10,6 @@ interface Connection {
     status: 'disconnected' | 'connected' | 'pending';
 }
 
-// Modal component remains the same
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -37,28 +35,24 @@ const WhatsApp: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalStep, setModalStep] = useState<'form' | 'qrcode'>('form');
     
-    // Form state
     const [whatsappNumber, setWhatsappNumber] = useState('');
     const [sessionName, setSessionName] = useState('');
     
-    // QR Code state
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
 
-    // Effect to generate QR code when modal opens for connection
     useEffect(() => {
         if (isModalOpen && modalStep === 'qrcode' && selectedConnection) {
             generateQrCode(selectedConnection.number);
         }
     }, [isModalOpen, modalStep, selectedConnection]);
     
-    // Effect to simulate connection after QR code is shown
     useEffect(() => {
         if (modalStep === 'qrcode' && qrCodeDataUrl && selectedConnection) {
             const timer = setTimeout(() => {
                 handleConnect(selectedConnection.id);
-            }, 3000); // Simulate scanning QR for 3 seconds
+            }, 3000);
             return () => clearTimeout(timer);
         }
     }, [qrCodeDataUrl, selectedConnection]);
@@ -69,7 +63,7 @@ const WhatsApp: React.FC = () => {
         
         setTimeout(() => {
              setConnections(prev => prev.map(c => c.id === connectionId ? {...c, status: 'connected'} : c));
-        }, 4000); // Simulate connection handshake for 4 seconds
+        }, 4000);
     };
     
     const handleDisconnect = (connectionId: number) => {
@@ -80,7 +74,6 @@ const WhatsApp: React.FC = () => {
         setIsGenerating(true);
         setQrCodeDataUrl(null);
         try {
-            // Simulate API call delay
             await new Promise(resolve => setTimeout(resolve, 1000));
             const connectionString = `CONEXA.AI_SESSION_${Date.now()}_${numberToConnect}`;
             const dataUrl = await QRCode.toDataURL(connectionString, {
@@ -109,7 +102,6 @@ const WhatsApp: React.FC = () => {
     
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        // Delay resetting state to avoid flicker during closing animation
         setTimeout(() => {
             setQrCodeDataUrl(null);
             setModalStep('form');

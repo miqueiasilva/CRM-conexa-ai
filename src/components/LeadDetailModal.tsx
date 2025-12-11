@@ -15,13 +15,11 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
-  // Local state for editing fields
   const [editedName, setEditedName] = useState('');
   const [editedWhatsapp, setEditedWhatsapp] = useState('');
   const [editedOrigin, setEditedOrigin] = useState('');
   const [editedValue, setEditedValue] = useState<number>(0);
 
-  // Sync state when lead opens or changes
   useEffect(() => {
     setIsDeleting(false);
     setIsEditing(false);
@@ -75,7 +73,6 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
           alert("Este lead não possui número de WhatsApp cadastrado.");
           return;
       }
-      // Remove non-numeric characters
       const cleanNumber = lead.whatsapp.replace(/\D/g, '');
       if (cleanNumber) {
           window.open(`https://wa.me/${cleanNumber}`, '_blank');
@@ -96,7 +93,6 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
     >
       <div className="bg-card rounded-xl shadow-2xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-100" onClick={e => e.stopPropagation()}>
         
-        {/* Header */}
         <div className="bg-primary/5 p-6 border-b border-border flex justify-between items-start">
              <div className="flex items-center w-full">
                 <div className="w-14 h-14 rounded-full bg-white border-2 border-primary text-primary flex items-center justify-center font-bold text-2xl flex-shrink-0 mr-4 shadow-sm">
@@ -123,7 +119,6 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
             </button>
         </div>
 
-        {/* Content */}
         <div className="p-6 space-y-6 overflow-y-auto">
             <div className="grid grid-cols-2 gap-4">
                  <div className="bg-light p-3 rounded-lg border border-border">
@@ -234,7 +229,6 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
             </div>
         </div>
 
-        {/* Footer with Delete Action */}
         <div className="p-4 border-t border-border bg-gray-50 flex justify-between items-center rounded-b-xl">
              <button 
                 onClick={handleDeleteClick}

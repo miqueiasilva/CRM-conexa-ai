@@ -5,8 +5,6 @@ let chat: Chat | null = null;
 
 const getAi = () => {
     if (!ai) {
-        // The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-        // Assume this variable is pre-configured, valid, and accessible.
         ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     }
     return ai;

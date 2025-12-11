@@ -62,16 +62,13 @@ const initialAgent: AgentData = {
     ]
 };
 
-
 const App: React.FC = () => {
-  // Authentication state managed by Supabase
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
   const [activePage, setActivePage] = useState(() => {
     return localStorage.getItem('conexa_active_page') || 'Início';
   });
   
-  // Data states
   const [leads, setLeads] = useState<Lead[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -79,14 +76,11 @@ const App: React.FC = () => {
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  // Check Supabase Auth State on Mount
   useEffect(() => {
-    // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
     });
 
-    // Listen for auth changes (login, logout, etc.)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -96,14 +90,12 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Save active page to localStorage whenever it changes
   useEffect(() => {
     if (isAuthenticated) {
         localStorage.setItem('conexa_active_page', activePage);
     }
   }, [activePage, isAuthenticated]);
 
-  // Fetch initial data from Supabase
   useEffect(() => {
     if (isAuthenticated) {
       loadData();
@@ -130,9 +122,7 @@ const App: React.FC = () => {
     }
   }, [activePage]);
 
-  // This function is passed to LoginPage but Supabase handles the state change automatically via useEffect
   const handleLogin = () => {
-      // No manual state update needed, subscription handles it
   };
 
   const handleAddLead = async (leadData: Omit<Lead, 'id' | 'status'>) => {
@@ -196,10 +186,8 @@ const App: React.FC = () => {
     await supabase.auth.signOut();
     localStorage.removeItem('conexa_active_page');
     setActivePage('Início');
-    // State updates automatically via subscription
   };
 
-  // Show nothing or a loader while checking auth status
   if (isAuthenticated === null) {
       return (
         <div className="flex h-screen items-center justify-center bg-background">
@@ -212,7 +200,6 @@ const App: React.FC = () => {
     return <LoginPage onLogin={handleLogin} />;
   }
 
-  // Loading Screen while fetching initial data
   if (isLoadingData && activePage === 'DashboardCRM') {
     return (
        <div className="flex h-screen items-center justify-center bg-background">
@@ -282,7 +269,6 @@ const Dashboard: React.FC<DashboardProps> = ({ leads, appointments }) => {
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
     const activeAppointments = appointments.length;
 
-    // Explicitly typing the accumulator to avoid implicit any error
     const funnelCounts = FUNNEL_STAGES.reduce((acc: Record<string, number>, stage: LeadStatus) => {
         acc[stage] = leads.filter(lead => lead.status === stage).length;
         return acc;

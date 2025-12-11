@@ -24,7 +24,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
             const savedMessages = JSON.parse(savedMessagesRaw);
             if (savedMessages && savedMessages.length > 0) {
                 setMessages(savedMessages);
-                startChat(); // Re-initialize chat session for new messages
+                startChat();
                 return;
             }
         }

@@ -11,8 +11,8 @@ export interface Lead {
   whatsapp: string;
   origin: string;
   status: LeadStatus;
-  value?: number; // New field for deal value
-  lastContact?: string; // New field for last contact date
+  value?: number;
+  lastContact?: string;
 }
 
 export interface Appointment {
@@ -23,7 +23,6 @@ export interface Appointment {
   dateTime: Date;
 }
 
-// Added a specific type for function calls to improve type safety.
 export interface FunctionCall {
     name: string;
     args: { [key: string]: any };
@@ -33,7 +32,7 @@ export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';
   text: string;
-  functionCall?: FunctionCall; // Using the new FunctionCall type.
+  functionCall?: FunctionCall;
 }
 
 export type AgentData = {

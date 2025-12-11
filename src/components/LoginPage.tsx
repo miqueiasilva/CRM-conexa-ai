@@ -33,7 +33,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Rotating Slogans Effect
   useEffect(() => {
     const interval = setInterval(() => {
       setSloganIndex(prevIndex => (prevIndex + 1) % slogans.length);
@@ -41,7 +40,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Canvas Animation Effect
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -124,22 +122,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     try {
         if (isRegistering) {
-            // Lógica de Cadastro
             const { error } = await supabase.auth.signUp({
                 email,
                 password,
             });
             if (error) throw error;
             alert("Cadastro realizado! Verifique seu e-mail para confirmar a conta (se necessário) ou faça login.");
-            setIsRegistering(false); // Volta para a tela de login
+            setIsRegistering(false); 
         } else {
-            // Lógica de Login
             const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
             if (error) throw error;
-            // O App.tsx vai detectar a mudança de sessão automaticamente
         }
     } catch (error: any) {
         setErrorMessage(error.message || "Ocorreu um erro. Tente novamente.");
@@ -164,7 +159,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Cover Section */}
       <div className="hidden md:flex w-1/2 bg-primary text-white flex-col items-center justify-center p-12 text-center relative overflow-hidden">
         <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
         <div className="relative z-10">
@@ -187,7 +181,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         `}</style>
       </div>
 
-      {/* Form Section */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-card p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-text-primary mb-2">

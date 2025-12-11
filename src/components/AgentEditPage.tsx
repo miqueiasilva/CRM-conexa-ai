@@ -61,7 +61,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
             <p className="text-text-secondary mb-8">Ajuste as configurações do seu assistente de IA.</p>
             
             <form onSubmit={handleSubmit} className="space-y-10">
-                {/* Section: Agent Type (Read-only) */}
                 <section>
                     <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center"><Bot className="mr-3 text-primary" /> Tipo de IA</h2>
                     <div className="bg-light p-4 rounded-lg border border-border">
@@ -70,7 +69,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
                     </div>
                 </section>
 
-                {/* Section: AI Profile (from Step 2) */}
                 <section>
                     <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center"><User className="mr-3 text-primary" /> Perfil da IA</h2>
                     <div className="grid md:grid-cols-2 gap-6">
@@ -118,7 +116,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
                     </div>
                 </section>
 
-                {/* Section: Company Profile (from Step 3) */}
                 <section>
                     <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center"><Building className="mr-3 text-primary" /> Perfil da empresa</h2>
                     <div className="space-y-4">
@@ -169,7 +166,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
                     </div>
                 </section>
 
-                {/* Section: IA Steps (from Step 4) */}
                 <section>
                     <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center"><ListChecks className="mr-3 text-primary" /> Etapas da IA</h2>
                      <div className="space-y-4">
@@ -188,7 +184,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
                     </div>
                 </section>
 
-                {/* Section: Training (from Step 5) */}
                 <section>
                     <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center"><BrainCircuit className="mr-3 text-primary" /> Treinamento e Base de Conhecimento</h2>
                     <p className="text-text-secondary mb-6 -mt-4">Forneça informações adicionais para a IA responder perguntas frequentes.</p>
@@ -238,7 +233,6 @@ const AgentEditPage: React.FC<AgentEditPageProps> = ({ agentToEdit, onSave, onCa
                     </div>
                 </section>
                 
-                {/* Navigation */}
                 <div className="flex justify-end items-center mt-12 border-t border-border pt-6 space-x-4">
                     <button
                         type="button"

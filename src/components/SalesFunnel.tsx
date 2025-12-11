@@ -18,18 +18,15 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // State for Add Lead Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadWhatsapp, setNewLeadWhatsapp] = useState('');
   const [newLeadOrigin, setNewLeadOrigin] = useState('Manual');
 
-  // Atualiza o lead selecionado se a lista de leads mudar (ex: após edição)
   useEffect(() => {
     if (selectedLead) {
         const updatedLead = leads.find(l => l.id === selectedLead.id);
-        // Se encontrou uma versão mais nova do lead, atualiza o modal
         if (updatedLead && updatedLead !== selectedLead) {
             setSelectedLead(updatedLead);
         }
@@ -93,7 +90,6 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto z-10">
-                {/* Search Input with Clear Button */}
                 <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors" size={18} />
                     <input 
@@ -114,7 +110,6 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                 </div>
 
                 <div className="flex space-x-2">
-                    {/* Quick Action Button */}
                     <button 
                         type="button"
                         onClick={handleOpenAddModal}
@@ -146,7 +141,6 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
         ))}
       </div>
 
-       {/* Detail Modal - Renderizado condicionalmente para garantir atualização */}
        {selectedLead && (
            <LeadDetailModal 
                 lead={selectedLead} 
@@ -156,7 +150,6 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
            />
        )}
 
-       {/* Add Lead Modal Overlay */}
        {isAddModalOpen && (
            <div 
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4" 
