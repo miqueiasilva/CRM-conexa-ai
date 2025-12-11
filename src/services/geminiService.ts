@@ -4,9 +4,9 @@ let ai: GoogleGenAI | null = null;
 let chat: Chat | null = null;
 
 const getApiKey = (): string | undefined => {
-    // Tenta pegar a chave do ambiente Vite (Padrão para Vercel/Localhost moderno)
+    // Padrão Vite para variáveis de ambiente
     // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
         // @ts-ignore
         return import.meta.env.VITE_API_KEY;
     }
@@ -94,7 +94,8 @@ export async function runChat(prompt: string) {
     }
     
     if (!chat) {
-      throw new Error("Chat could not be initialized (Check API Key)");
+      console.error("Chat could not be initialized (Check API Key)");
+      return { text: "Erro: Não foi possível conectar à IA. Verifique a chave da API." } as any;
     }
 
     const result = await chat.sendMessage({ message: prompt });
