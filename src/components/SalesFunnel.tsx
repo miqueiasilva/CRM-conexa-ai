@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Lead, LeadStatus } from '../types';
-import { FUNNEL_STAGES } from '../constants';
+import { Lead, LeadStatus } from '@/types';
+import { FUNNEL_STAGES } from '@/constants';
 import KanbanColumn from './KanbanColumn';
 import { Plus, MessageSquare, Download, Search, X, Loader2 } from 'lucide-react';
 import LeadDetailModal from './LeadDetailModal';
@@ -135,7 +134,7 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
         </div>
 
       <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
-        {FUNNEL_STAGES.map(status => (
+        {FUNNEL_STAGES.map((status: LeadStatus) => (
           <KanbanColumn 
             key={status}
             title={status} 
