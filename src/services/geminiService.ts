@@ -3,9 +3,24 @@ import { GoogleGenAI, FunctionDeclaration, Type, Chat } from "@google/genai";
 let ai: GoogleGenAI | null = null;
 let chat: Chat | null = null;
 
+const getApiKey = (): string | undefined => {
+    // Tenta pegar a chave do ambiente Vite (Padrão para Vercel/Localhost moderno)
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
+        // @ts-ignore
+        return import.meta.env.VITE_API_KEY;
+    }
+    return undefined;
+};
+
 const getAi = () => {
     if (!ai) {
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            console.warn("Aviso: API Key do Google Gemini não encontrada. O chat pode não funcionar.");
+            return null;
+        }
+        ai = new GoogleGenAI({ apiKey });
     }
     return ai;
 };
@@ -59,6 +74,8 @@ const functionDeclarations: FunctionDeclaration[] = [
 
 export async function startChat() {
     const genAI = getAi();
+    if (!genAI) return;
+
     chat = genAI.chats.create({
         model: 'gemini-2.5-flash',
         config: {
@@ -77,7 +94,7 @@ export async function runChat(prompt: string) {
     }
     
     if (!chat) {
-      throw new Error("Chat not initialized");
+      throw new Error("Chat could not be initialized (Check API Key)");
     }
 
     const result = await chat.sendMessage({ message: prompt });
