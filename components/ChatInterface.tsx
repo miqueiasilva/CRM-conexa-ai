@@ -1,7 +1,9 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { ChatMessage, Lead, Appointment, FunctionCall } from '../types';
+import { ChatMessage, Lead, Appointment } from '../types';
 import { GoogleGenAI } from "@google/genai";
 import { Send, Bot, Loader2, Sparkles } from 'lucide-react';
+import { APP_NAME } from '../constants';
 
 interface ChatInterfaceProps {
     addLead: (lead: Omit<Lead, 'id' | 'status'>) => void;
@@ -24,7 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
 
     useEffect(() => {
         setMessages([
-            { id: '1', sender: 'ai', text: 'Olá! Sou Jaci.AI, sua assistente da Convexa.AI. Como posso ajudar seu negócio hoje? Posso cadastrar leads, verificar serviços ou agendar horários.' }
+            { id: '1', sender: 'ai', text: `Olá! Sou Jaci.AI, sua assistente da ${APP_NAME}. Como posso ajudar seu negócio hoje? Posso cadastrar leads, verificar serviços ou agendar horários.` }
         ]);
     }, []);
 
@@ -36,7 +38,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
                 model: 'gemini-3-flash-preview',
                 contents: userPrompt,
                 config: {
-                    systemInstruction: `Você é Jaci.AI, assistente virtual da Convexa.AI. 
+                    systemInstruction: `Você é Jaci.AI, assistente virtual da ${APP_NAME}. 
                     Seu objetivo é ser útil, empática e eficiente.
                     Capacidades: 
                     1. Criar Leads: Se o usuário der nome e contato, diga que anotou.
@@ -48,12 +50,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
 
             const text = response.text || 'Desculpe, não consegui processar isso agora.';
             setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'ai', text }]);
-            
-            // Simulação simples de detecção de intenção (já que não estamos usando tools completas aqui por brevidade)
-            if (userPrompt.toLowerCase().includes('meu nome é') && userPrompt.includes('whatsapp')) {
-                // Mock trigger for lead creation
-                console.log("Potential lead detected by keyword simple heuristic");
-            }
         } catch (error) {
             setMessages(prev => [...prev, { id: 'error', sender: 'ai', text: 'Tive um problema na conexão. Pode repetir?' }]);
         } finally {
@@ -89,7 +85,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100">
                     <Sparkles size={14} className="text-blue-600" />
-                    <span className="text-xs font-bold text-blue-700">Gemini 3 Turbo</span>
+                    <span className="text-xs font-bold text-blue-700">Gemini 3 Pro</span>
                 </div>
             </div>
 

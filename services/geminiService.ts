@@ -79,10 +79,10 @@ export async function startChat() {
     chat = genAI.chats.create({
         model: 'gemini-3-flash-preview',
         config: {
-          systemInstruction: `Você é Jaci.AI, assistente virtual integrada à plataforma Convexa.AI. Seu objetivo é ajudar clientes do Studio Jacilene Félix a conhecer serviços, verificar preços e agendar horários.
+          systemInstruction: `Você é Jaci.AI, assistente virtual integrada à plataforma Conexa.AI. Seu objetivo é ajudar clientes do Studio Jacilene Félix a conhecer serviços, verificar preços e agendar horários.
           Serviços: Micropigmentação (R$ 500), Design de Sobrancelhas (R$ 80), Micropigmentação Labial (R$ 450), Limpeza de Pele (R$ 150).
           Para agendar: peça nome, serviço, data e hora. Confirme pedindo sinal de R$100 via PIX fictício.
-          Seja empática e use o tom da Convexa.AI: moderno, eficiente e conectado.`,
+          Seja empática e use o tom da Conexa.AI: moderno, eficiente e conectado.`,
           tools: [{ functionDeclarations }],
         },
     });

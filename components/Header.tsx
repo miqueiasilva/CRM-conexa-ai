@@ -1,12 +1,14 @@
+
 import React from 'react';
 import { Bell, Search, User } from 'lucide-react';
+import { APP_NAME } from '../constants';
 
 const Header: React.FC = () => {
   return (
     <header className="flex justify-between items-center mb-10 px-2 animate-fade-in-up">
       <div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Visão Geral</h1>
-        <p className="text-slate-500 font-medium">Bem-vindo ao centro de comando Convexa.</p>
+        <p className="text-slate-500 font-medium">Bem-vindo ao centro de comando {APP_NAME}.</p>
       </div>
       
       <div className="flex items-center gap-6">
@@ -26,7 +28,7 @@ const Header: React.FC = () => {
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
                 <div className="text-right hidden sm:block">
-                    <p className="text-sm font-black text-slate-900 leading-none">Admin Convexa</p>
+                    <p className="text-sm font-black text-slate-900 leading-none">Admin {APP_NAME}</p>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gerente Geral</p>
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200 cursor-pointer hover:scale-105 transition-transform">

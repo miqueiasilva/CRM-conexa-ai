@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { ArrowRight, Bot, MessageSquare, Radio, Users, Zap, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Bot, MessageSquare, Radio, Users, Zap } from 'lucide-react';
+import { APP_NAME } from '../constants';
 
 interface HomePageProps {
     setPage: (page: string) => void;
@@ -9,7 +11,7 @@ const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
     const missions = [
         {
             icon: <Users size={24} />,
-            title: "Comunidade Nexttrack",
+            title: `Comunidade ${APP_NAME}`,
             description: "Acesse nosso grupo exclusivo de empresários e SDRs.",
             buttonText: "Entrar no grupo",
             action: () => window.open('https://chat.whatsapp.com/', '_blank'),
@@ -48,10 +50,10 @@ const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                     <div className="p-2 bg-blue-600 rounded-lg shadow-md">
                         <Zap className="text-white fill-white" size={20}/>
                     </div>
-                    <span className="text-xs font-black text-blue-600 uppercase tracking-widest">Onboarding Convexa</span>
+                    <span className="text-xs font-black text-blue-600 uppercase tracking-widest">Onboarding {APP_NAME}</span>
                 </div>
                 <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-4">Complete suas missões</h1>
-                <p className="text-slate-500 font-medium text-lg">Siga os passos abaixo para tornar sua empresa 100% autônoma.</p>
+                <p className="text-slate-500 font-medium text-lg">Siga os passos abaixo para tornar sua empresa 100% autônoma com a inteligência do {APP_NAME}.</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-12">
