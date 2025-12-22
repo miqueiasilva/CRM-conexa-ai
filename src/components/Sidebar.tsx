@@ -48,9 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
 
   return (
     <>
-      {/* Mobile Backdrop Overlay */}
+      {/* Mobile Backdrop Overlay - Transparente Escuro */}
       <div 
-        className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity duration-500 lg:hidden ${
+        className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
       {/* Sidebar Drawer Container */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 flex flex-col shadow-2xl lg:shadow-none
-        transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) lg:static lg:translate-x-0
+        transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="px-6 py-8 flex items-center justify-between">
@@ -70,10 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
           </div>
           
-          {/* Close Button Mobile - Enhanced Interaction */}
+          {/* Close Button Mobile (Seta para Esquerda) */}
           <button 
             onClick={onClose}
-            className="lg:hidden p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all active:scale-90"
+            className="lg:hidden p-2 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all active:scale-95"
+            aria-label="Fechar menu"
           >
             <ChevronLeft size={24} />
           </button>
@@ -89,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
               {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
             {crmOpen && (
-              <div className="space-y-1 animate-fade-in-up">
+              <div className="space-y-1">
                 <NavItem icon={<LayoutGrid size={18} />} label="Dashboard" isActive={activePage === 'DashboardCRM'} onClick={() => handlePageSelect('DashboardCRM')} isSubItem />
                 <NavItem icon={<FileText size={18} />} label="Quadro" isActive={activePage === 'Quadro'} onClick={() => handlePageSelect('Quadro')} isSubItem />
                 <NavItem icon={<FileText size={18} />} label="Disparo" isActive={activePage === 'Disparo'} onClick={() => handlePageSelect('Disparo')} isSubItem />
@@ -104,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
               {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
             {conexaAIOpen && (
-              <div className="space-y-1 animate-fade-in-up">
+              <div className="space-y-1">
                 <NavItem icon={<Zap size={18} />} label="Configurar Agente" isActive={activePage === 'Criação de Agente'} onClick={() => handlePageSelect('Criação de Agente')} isSubItem />
                 <NavItem icon={<Bot size={18} />} label="Simulador Jaci" isActive={activePage === 'Simulador'} onClick={() => handlePageSelect('Simulador')} isSubItem />
               </div>

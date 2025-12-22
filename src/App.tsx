@@ -8,7 +8,7 @@ import AppointmentsList from './components/AppointmentsList';
 import LeadSourceChart from './components/LeadSourceChart';
 import ChatInterface from './components/ChatInterface';
 import { Lead, Appointment, LeadStatus, AgentData } from './types';
-import { BarChart, Users, DollarSign, MessageCircle, Menu, Bell } from 'lucide-react';
+import { BarChart, Users, DollarSign, MessageCircle } from 'lucide-react';
 import AgentCreator from './components/AgentCreator';
 import AgentInfoPage from './components/AgentInfoPage';
 import WhatsApp from './components/WhatsApp';
@@ -60,7 +60,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (activePage) {
       case 'Início': return <HomePage setPage={setActivePage} />;
-      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuOpen={() => setSidebarOpen(true)} />;
       case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={(id, s) => setLeads(prev => prev.map(l => l.id === id ? {...l, status: s} : l))} addLead={(l) => setLeads(prev => [{...l, id: Date.now(), status: LeadStatus.CAPTURADOS}, ...prev])} onDeleteLead={(id) => setLeads(prev => prev.filter(l => l.id !== id))} onUpdateLead={(l) => setLeads(prev => prev.map(old => old.id === l.id ? l : old))} />;
       case 'Simulador': return <ChatInterface addLead={() => {}} addAppointment={() => {}} />;
       case 'Criação de Agente': return <AgentCreator onSave={(data) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
@@ -79,24 +79,22 @@ const App: React.FC = () => {
     <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden">
       <Sidebar 
         activePage={activePage} 
-        setPage={setActivePage} 
+        setPage={(page) => {
+          setActivePage(page);
+          setSidebarOpen(false);
+        }} 
         onLogout={handleLogout} 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
       />
       
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {/* Mobile Navbar - Glass Effect */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md border-b border-slate-200 z-30 sticky top-0">
-          <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
-            <Menu size={24} />
-          </button>
-          <span className="font-black text-slate-900 tracking-tighter text-lg">{activePage}</span>
-          <button className="p-2 -mr-2 text-slate-400 relative">
-            <Bell size={22} />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>
-          </button>
-        </div>
+        {/* Header persistente para páginas que não têm Header interno */}
+        {activePage !== 'DashboardCRM' && (
+          <div className="lg:hidden p-4 bg-white border-b border-slate-200">
+            <Header onMenuOpen={() => setSidebarOpen(true)} title={activePage} subtitle="" />
+          </div>
+        )}
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
           {renderContent()}
@@ -106,16 +104,14 @@ const App: React.FC = () => {
   );
 };
 
-const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOpen: () => void }> = ({ leads, appointments, onMenuOpen }) => {
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
 
     return (
         <div className="animate-fade-in-up space-y-6">
-            <div className="hidden lg:block">
-              <Header title="Visão Geral" />
-            </div>
+            <Header title="Visão Geral" onMenuOpen={onMenuOpen} />
             
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                 <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
