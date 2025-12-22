@@ -1,7 +1,5 @@
-
 import React, { useState } from 'react';
-import { Search, ChevronDown, BookOpen, Bot, LayoutGrid, MessageSquare, ChevronUp, LifeBuoy } from 'lucide-react';
-import { APP_NAME } from '../constants';
+import { Search, ChevronDown, BookOpen, Bot, LayoutGrid, Mail, MessageSquare, ChevronUp, LifeBuoy } from 'lucide-react';
 
 interface HelpPageProps {
     setPage: (page: string) => void;
@@ -37,7 +35,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ setPage }) => {
                     <LifeBuoy size={32} />
                 </div>
                 <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-4">Central de Ajuda</h1>
-                <p className="text-xl text-slate-500 font-medium">Tudo o que você precisa saber para escalar com IA no ecossistema {APP_NAME}.</p>
+                <p className="text-xl text-slate-500 font-medium">Tudo o que você precisa saber para escalar com IA.</p>
                 <div className="relative mt-10 max-w-xl mx-auto">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                     <input
@@ -76,11 +74,11 @@ const HelpPage: React.FC<HelpPageProps> = ({ setPage }) => {
                 <div className="lg:col-span-2">
                     <h2 className="text-3xl font-black text-slate-900 mb-8">Dúvidas Frequentes</h2>
                     <div className="space-y-4">
-                        <FaqItem question={`Como a Jaci.AI qualifica meus leads na ${APP_NAME}?`}>
-                            <p>A Jaci.AI utiliza processamento de linguagem natural para analisar as mensagens recebidas. Ela segue as instruções de fluxo que você define no Criador de Agente para extrair informações críticas como serviço desejado, urgência e orçamento.</p>
+                        <FaqItem question="Como a Jaci.AI qualifica meus leads?">
+                            <p>A Jaci.AI utiliza processamento de linguagem natural (LLM) para analisar as mensagens recebidas. Ela segue as instruções de fluxo que você define no Criador de Agente para extrair informações críticas como serviço desejado, urgência e orçamento.</p>
                         </FaqItem>
                         <FaqItem question="Quantos números posso conectar?">
-                            <p>No plano {APP_NAME} Base você pode conectar até 2 números. Para contas Enterprise o limite é customizado de acordo com sua operação de SDR.</p>
+                            <p>No plano Convexa Base você pode conectar até 2 números. Para contas Enterprise o limite é customizado de acordo com sua operação de SDR.</p>
                         </FaqItem>
                         <FaqItem question="O sistema agenda direto no Google Calendar?">
                             <p>Sim! Através da integração na página de Perfil da Empresa, você pode conectar sua agenda e a IA só oferecerá horários realmente disponíveis.</p>
@@ -94,7 +92,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ setPage }) => {
                     </div>
                     <h3 className="text-2xl font-bold mb-4">Ainda com dúvidas?</h3>
                     <p className="text-slate-400 font-medium mb-8">Nossa equipe de suporte técnico está pronta para te atender agora.</p>
-                    <a href="mailto:suporte@conexa.ai" className="bg-blue-600 text-white font-black py-4 px-6 rounded-2xl text-center shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all">Falar com Suporte</a>
+                    <a href="mailto:suporte@convexa.ai" className="bg-blue-600 text-white font-black py-4 px-6 rounded-2xl text-center shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all">Falar com Suporte</a>
                     <div className="mt-8 pt-8 border-t border-white/10 flex items-center gap-4">
                         <div className="flex -space-x-2">
                             {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800"></div>)}
