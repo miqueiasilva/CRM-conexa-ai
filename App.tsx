@@ -8,7 +8,7 @@ import AppointmentsList from './components/AppointmentsList';
 import LeadSourceChart from './components/LeadSourceChart';
 import ChatInterface from './components/ChatInterface';
 import { Lead, Appointment, LeadStatus, AgentData } from './types';
-import { BarChart, Users, DollarSign, MessageCircle } from 'lucide-react';
+import { BarChart, Users, DollarSign, MessageCircle, Menu } from 'lucide-react';
 import AgentCreator from './components/AgentCreator';
 import AgentInfoPage from './components/AgentInfoPage';
 import WhatsApp from './components/WhatsApp';
@@ -108,13 +108,30 @@ const App: React.FC = () => {
     <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden">
       <Sidebar 
         activePage={activePage} 
-        setPage={setActivePage} 
+        setPage={(page) => {
+          setActivePage(page);
+          setIsSidebarOpen(false); // Fecha ao navegar no mobile
+        }} 
         onLogout={handleLogout} 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)}
       />
       
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Mobile Header Trigger for pages without internal dashboard headers */}
+        {activePage !== 'DashboardCRM' && (
+          <div className="lg:hidden p-4 bg-white border-b border-slate-200 flex items-center justify-between">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-2 -ml-2 text-slate-600"
+            >
+              <Menu size={24} />
+            </button>
+            <h1 className="text-lg font-black text-slate-900">{activePage}</h1>
+            <div className="w-10"></div> {/* Spacer for alignment */}
+          </div>
+        )}
+        
         <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
           {renderContent()}
         </main>

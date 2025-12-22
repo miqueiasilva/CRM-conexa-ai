@@ -20,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({
           <button 
             onClick={onMenuOpen}
             className="lg:hidden p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-95"
+            aria-label="Abrir menu"
           >
             <Menu size={24} />
           </button>
