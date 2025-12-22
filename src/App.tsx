@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import StatCard from './components/StatCard';
@@ -8,7 +8,7 @@ import AppointmentsList from './components/AppointmentsList';
 import LeadSourceChart from './components/LeadSourceChart';
 import ChatInterface from './components/ChatInterface';
 import { Lead, Appointment, LeadStatus, AgentData } from './types';
-import { BarChart, Users, DollarSign, MessageCircle, Loader2 } from 'lucide-react';
+import { BarChart, Users, DollarSign, MessageCircle, Menu, Bell } from 'lucide-react';
 import AgentCreator from './components/AgentCreator';
 import AgentInfoPage from './components/AgentInfoPage';
 import WhatsApp from './components/WhatsApp';
@@ -55,37 +55,14 @@ const App: React.FC = () => {
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  const handleAddLead = (leadData: Omit<Lead, 'id' | 'status'>) => {
-    const newLead: Lead = {
-      ...leadData,
-      id: Date.now(),
-      status: LeadStatus.CAPTURADOS,
-      value: leadData.value || 0,
-      lastContact: 'Agora'
-    };
-    setLeads(prev => [newLead, ...prev]);
-  };
-
-  const handleUpdateLead = (updatedLead: Lead) => {
-    setLeads(prev => prev.map(lead => lead.id === updatedLead.id ? updatedLead : lead));
-  };
-
-  const handleDeleteLead = (leadId: number) => {
-    setLeads(prev => prev.filter(lead => lead.id !== leadId));
-  };
-
-  const handleLeadDrop = (leadId: number, newStatus: LeadStatus) => {
-    setLeads(prev => prev.map(lead => lead.id === leadId ? { ...lead, status: newStatus } : lead));
-  };
-
   const handleLogout = () => setIsAuthenticated(false);
 
   const renderContent = () => {
     switch (activePage) {
       case 'Início': return <HomePage setPage={setActivePage} />;
-      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuClick={() => setSidebarOpen(true)} />;
-      case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
-      case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
+      case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={(id, s) => setLeads(prev => prev.map(l => l.id === id ? {...l, status: s} : l))} addLead={(l) => setLeads(prev => [{...l, id: Date.now(), status: LeadStatus.CAPTURADOS}, ...prev])} onDeleteLead={(id) => setLeads(prev => prev.filter(l => l.id !== id))} onUpdateLead={(l) => setLeads(prev => prev.map(old => old.id === l.id ? l : old))} />;
+      case 'Simulador': return <ChatInterface addLead={() => {}} addAppointment={() => {}} />;
       case 'Criação de Agente': return <AgentCreator onSave={(data) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
       case 'Info do Agente': return <AgentInfoPage agent={savedAgent} onEdit={() => setIsEditingAgent(true)} />;
       case 'WhatsApp': return <WhatsApp />;
@@ -96,12 +73,10 @@ const App: React.FC = () => {
     }
   };
 
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
-  }
+  if (!isAuthenticated) return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
 
   return (
-    <div className="flex h-screen bg-background text-text overflow-hidden">
+    <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden">
       <Sidebar 
         activePage={activePage} 
         setPage={setActivePage} 
@@ -109,46 +84,50 @@ const App: React.FC = () => {
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
       />
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative">
-        {/* Mobile Header Trigger for pages without internal dashboard headers */}
-        {!['DashboardCRM'].includes(activePage) && (
-          <div className="lg:hidden p-4 bg-white border-b border-border flex items-center">
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="p-2 -ml-2 text-text-secondary hover:text-primary transition-colors"
-            >
-              <BarChart className="rotate-90" size={24} />
-            </button>
-            <span className="ml-2 font-bold text-text-primary">{activePage}</span>
-          </div>
-        )}
-        <div className="p-4 md:p-6 lg:p-8">
-          {renderContent()}
+      
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        {/* Mobile Navbar - Glass Effect */}
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md border-b border-slate-200 z-30 sticky top-0">
+          <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
+            <Menu size={24} />
+          </button>
+          <span className="font-black text-slate-900 tracking-tighter text-lg">{activePage}</span>
+          <button className="p-2 -mr-2 text-slate-400 relative">
+            <Bell size={22} />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>
+          </button>
         </div>
-      </main>
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 };
 
-const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuClick: () => void }> = ({ leads, appointments, onMenuClick }) => {
-    const [showSuggestions, setShowSuggestions] = useState(true);
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
 
     return (
-        <div className="animate-fade-in-up">
-            <Header onMenuOpen={onMenuClick} />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
-                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#22C55E" />
-                <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
-                <StatCard title="Agendamentos" value={appointments.length} icon="DollarSign" color="#EF4444" />
+        <div className="animate-fade-in-up space-y-6">
+            <div className="hidden lg:block">
+              <Header title="Visão Geral" />
             </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+                <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
+                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#10B981" />
+                <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
+                <StatCard title="Agendamentos" value={appointments.length} icon="Calendar" color="#EF4444" />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                    <div className="bg-card p-6 rounded-lg shadow-sm h-full border border-border">
-                       <h2 className="text-xl font-bold mb-6 text-text-primary">Funil de Vendas</h2>
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-100">
+                       <h2 className="text-xl font-black mb-6 text-slate-900">Funil de Vendas</h2>
                        <div className="space-y-6">
                            {FUNNEL_STAGES.map((stage, index) => {
                                const count = leads.filter(l => l.status === stage).length;
@@ -156,23 +135,22 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuCl
                                return (
                                <div key={stage}>
                                    <div className="flex justify-between items-center mb-2">
-                                       <span className="text-sm font-bold text-text-secondary uppercase tracking-wider">{stage}</span>
-                                       <span className="text-sm font-black text-text-primary">{count}</span>
+                                       <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{stage}</span>
+                                       <span className="text-sm font-black text-slate-900">{count}</span>
                                    </div>
-                                   <div className="w-full bg-slate-100 rounded-full h-3">
-                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index % 3]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
+                                   <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                                       <div className={`${['bg-yellow-400', 'bg-blue-600', 'bg-emerald-500'][index % 3]} h-full rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
                                    </div>
                                </div>
                            )})}
                        </div>
                     </div>
+                    <LeadSourceChart />
                 </div>
                 <div className="space-y-6">
                     <AppointmentsList appointments={appointments} />
-                    <LeadSourceChart />
                 </div>
             </div>
-            {showSuggestions && <Suggestions onClose={() => setShowSuggestions(false)} />}
         </div>
     );
 };
