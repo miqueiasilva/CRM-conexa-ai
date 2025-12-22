@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, FunctionDeclaration, Type, Chat } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
@@ -76,7 +77,7 @@ const functionDeclarations: FunctionDeclaration[] = [
 export async function startChat() {
     const genAI = getAi();
     chat = genAI.chats.create({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         config: {
           systemInstruction: `Você é Jaci.AI, assistente virtual integrada à plataforma Convexa.AI. Seu objetivo é ajudar clientes do Studio Jacilene Félix a conhecer serviços, verificar preços e agendar horários.
           Serviços: Micropigmentação (R$ 500), Design de Sobrancelhas (R$ 80), Micropigmentação Labial (R$ 450), Limpeza de Pele (R$ 150).
@@ -98,11 +99,11 @@ export async function runChat(prompt: string) {
     return result;
 }
 
-export async function sendFunctionResponse(functionResponse: any) {
+export async function sendFunctionResponse(functionResponse: { functionResponses: { name: string; response: object }[] }) {
     if (!chat) {
         throw new Error("Chat not initialized");
     }
-    const functionResponseParts = functionResponse.functionResponses.map((fr: { name: string; response: object; }) => ({
+    const functionResponseParts = functionResponse.functionResponses.map((fr) => ({
         functionResponse: {
             name: fr.name,
             response: fr.response,

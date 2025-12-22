@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -78,11 +79,11 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (isEditingAgent && savedAgent) {
-        return <AgentEditPage agentToEdit={savedAgent} onSave={(data) => { setSavedAgent(data); setIsEditingAgent(false); }} onCancel={() => setIsEditingAgent(false)} />;
+        return <AgentEditPage agentToEdit={savedAgent} onSave={(data: AgentData) => { setSavedAgent(data); setIsEditingAgent(false); }} onCancel={() => setIsEditingAgent(false)} />;
     }
 
     switch (activePage) {
-      case 'Início': return <HomePage setPage={setActivePage} />;
+      case 'Início': return <HomePage setPage={(page: string) => setActivePage(page)} />;
       case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
       case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
       case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app: Omit<Appointment, 'id'>) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
@@ -91,8 +92,8 @@ const App: React.FC = () => {
       case 'WhatsApp': return <WhatsApp />;
       case 'Disparo': return <MessagePage />;
       case 'Mensagem': return <ChatListPage />;
-      case 'Ajuda': return <HelpPage setPage={setActivePage} />;
-      default: return <HomePage setPage={setActivePage} />;
+      case 'Ajuda': return <HelpPage setPage={(page: string) => setActivePage(page)} />;
+      default: return <HomePage setPage={(page: string) => setActivePage(page)} />;
     }
   };
 
@@ -102,7 +103,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-background text-text-primary">
-      <Sidebar activePage={activePage} setPage={setActivePage} onLogout={handleLogout} />
+      <Sidebar activePage={activePage} setPage={(page: string) => setActivePage(page)} onLogout={handleLogout} />
       <main className="flex-1 p-6 overflow-y-auto">
         {renderContent()}
       </main>
@@ -120,10 +121,10 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
         <div className="animate-fade-in-up">
             <Header />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <StatCard title="Total de Leads" value={totalLeads} icon={<Users size={24} className="text-blue-500" />} color="#3B82F6" />
-                <StatCard title="Atendimentos" value={answeredLeads} icon={<MessageCircle size={24} className="text-green-500" />} color="#22C55E" />
-                <StatCard title="Conversão" value={`${conversionRate}%`} icon={<BarChart size={24} className="text-yellow-500" />} color="#F59E0B" />
-                <StatCard title="Agendamentos" value={appointments.length} icon={<DollarSign size={24} className="text-red-500" />} color="#EF4444" />
+                <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
+                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#22C55E" />
+                <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
+                <StatCard title="Agendamentos" value={appointments.length} icon="DollarSign" color="#EF4444" />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
