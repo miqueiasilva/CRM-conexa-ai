@@ -6,10 +6,10 @@ interface LoginPageProps {
 }
 
 const slogans = [
-  "Centralize 100% do seu atendimento no WhatsApp.",
+  "Conectividade total para seu atendimento WhatsApp.",
   "Qualifique leads e agende serviços no automático.",
   "IA treinada para converter conversas em vendas.",
-  "Transforme seu WhatsApp em uma máquina de lucro."
+  "Sua empresa em uma nova era de conversão."
 ];
 
 const GoogleIcon = () => (
@@ -34,7 +34,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // RESTAURAÇÃO DO FUNDO ANIMADO (CANVAS PARTICLES)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -61,7 +60,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
       ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
 
@@ -108,29 +106,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      {/* Lado Esquerdo - Branding & Animação */}
       <div className="hidden md:flex md:w-1/2 bg-blue-600 relative items-center justify-center p-16 overflow-hidden">
-        {/* Camada de Gradiente */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-90" />
-        
-        {/* Canvas de Partículas */}
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
-        
-        {/* Conteúdo flutuante */}
         <div className="relative z-10 text-white text-center max-w-lg space-y-8">
           <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] glass border border-white/20 shadow-2xl animate-pulse-soft">
             <Zap size={72} className="text-white fill-white" />
           </div>
-          
           <div className="space-y-4">
-            <h1 className="text-7xl font-extrabold tracking-tighter">Conexa.AI</h1>
+            <h1 className="text-7xl font-extrabold tracking-tighter">Convexa.AI</h1>
             <div className="h-20 flex items-center justify-center">
               <p key={sloganIndex} className="text-2xl font-medium text-blue-50 leading-relaxed animate-fade-in-up">
                 {slogans[sloganIndex]}
               </p>
             </div>
           </div>
-
           <div className="pt-12 grid grid-cols-2 gap-8 border-t border-white/10">
             <div className="text-left">
               <span className="block text-3xl font-bold">10k+</span>
@@ -144,21 +134,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </div>
       </div>
 
-      {/* Lado Direito - Login Form */}
       <div className="flex-1 flex items-center justify-center p-6 md:p-20 bg-slate-50">
         <div className="w-full max-w-md animate-fade-in-up">
-          {/* Logo Mobile */}
           <div className="md:hidden flex flex-col items-center mb-12">
             <div className="p-3 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
               <Zap size={40} className="text-white fill-white" />
             </div>
-            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Conexa.AI</h2>
+            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Convexa.AI</h2>
           </div>
 
           <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative">
             <div className="mb-10">
               <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Login</h2>
-              <p className="text-slate-500 font-medium">Acesse seu ecossistema inteligente.</p>
+              <p className="text-slate-500 font-medium">Acesse seu ecossistema de conversão.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -171,7 +159,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     required 
                     className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
                     placeholder="voce@empresa.com"
-                    defaultValue="atendimento@conexa.ai"
+                    defaultValue="atendimento@convexa.ai"
                   />
                 </div>
               </div>
@@ -238,9 +226,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               Novo no ecossistema? <a href="#" className="text-blue-600 hover:underline underline-offset-4">Criar Conta Business</a>
             </p>
           </div>
-          
           <p className="mt-8 text-center text-slate-400 text-xs font-medium">
-            Protegido por Nexttrack™ Cybersecurity. Ao entrar você aceita nossos termos.
+            Protegido por Nexttrack™ Cybersecurity.
           </p>
         </div>
       </div>

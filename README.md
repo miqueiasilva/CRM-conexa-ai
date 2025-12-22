@@ -1,11 +1,11 @@
-# Conexa.AI - CRM & Atendimento Inteligente
+# Convexa.AI - CRM & Atendimento Inteligente
 
 Painel de controle inteligente para centralizar atendimentos via WhatsApp, qualificar leads com IA, agendar serviços e gerar relatórios de vendas.
 
 ## 🚀 Tecnologias
 
 - **Frontend:** React + TypeScript + Vite
-- **Estilização:** Tailwind CSS
+- **Estilização:** Tailwind CSS (via CDN para estabilidade)
 - **IA:** Google Gemini API
 - **Gráficos:** Recharts
 - **Ícones:** Lucide React

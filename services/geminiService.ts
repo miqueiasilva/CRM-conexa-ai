@@ -4,13 +4,11 @@ let ai: GoogleGenAI | null = null;
 let chat: Chat | null = null;
 
 const getApiKey = (): string | undefined => {
-    // Tenta pegar a chave do ambiente Vite (Padrão para Vercel/Localhost moderno)
-    // @ts-ignore - Evita erro de TS se types do vite não estiverem carregados
+    // @ts-ignore
     if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
         // @ts-ignore
         return import.meta.env.VITE_API_KEY;
     }
-    // Fallback para ambiente Node.js ou Preview (AI Studio)
     if (typeof process !== 'undefined' && process.env?.API_KEY) {
         return process.env.API_KEY;
     }
@@ -21,8 +19,6 @@ const getAi = () => {
     if (!ai) {
         const apiKey = getApiKey();
         if (!apiKey) {
-            console.error("ERRO CRÍTICO: API Key do Google Gemini não encontrada.");
-            console.error("Para rodar local/nuvem: Crie um arquivo .env com VITE_API_KEY=sua_chave");
             throw new Error("API_KEY environment variable not set");
         }
         ai = new GoogleGenAI({ apiKey });
@@ -72,7 +68,7 @@ const functionDeclarations: FunctionDeclaration[] = [
     },
     {
         name: 'handover_humano',
-        description: 'Transfere a conversa para um atendente humano quando a IA não consegue resolver a solicitação ou quando o cliente pede para falar com uma pessoa.',
+        description: 'Transfere a conversa para um atendente humano.',
         parameters: { type: Type.OBJECT, properties: {} },
     },
 ];
@@ -82,10 +78,10 @@ export async function startChat() {
     chat = genAI.chats.create({
         model: 'gemini-2.5-flash',
         config: {
-          systemInstruction: `Você é Jaci.AI, assistente virtual do Studio Jacilene Félix. Seu objetivo é ajudar clientes a conhecer os serviços, verificar preços e agendar horários.
-          Serviços disponíveis: Micropigmentação (R$ 500), Design de Sobrancelhas (R$ 80), Micropigmentação Labial (R$ 450), Limpeza de Pele (R$ 150).
-          Para agendar, você precisa do nome do cliente, serviço, data e hora. Sempre confirme o agendamento pedindo um sinal de R$100 via PIX (use um link fictício).
-          Seja sempre empática, clara e acolhedora. Se a dúvida for muito técnica ou o cliente pedir, transfira para um humano usando a função 'handover_humano'.`,
+          systemInstruction: `Você é Jaci.AI, assistente virtual integrada à plataforma Convexa.AI. Seu objetivo é ajudar clientes do Studio Jacilene Félix a conhecer serviços, verificar preços e agendar horários.
+          Serviços: Micropigmentação (R$ 500), Design de Sobrancelhas (R$ 80), Micropigmentação Labial (R$ 450), Limpeza de Pele (R$ 150).
+          Para agendar: peça nome, serviço, data e hora. Confirme pedindo sinal de R$100 via PIX fictício.
+          Seja empática e use o tom da Convexa.AI: moderno, eficiente e conectado.`,
           tools: [{ functionDeclarations }],
         },
     });
@@ -95,11 +91,9 @@ export async function runChat(prompt: string) {
     if (!chat) {
         await startChat();
     }
-    
     if (!chat) {
       throw new Error("Chat not initialized");
     }
-
     const result = await chat.sendMessage({ message: prompt });
     return result;
 }
@@ -108,14 +102,12 @@ export async function sendFunctionResponse(functionResponse: any) {
     if (!chat) {
         throw new Error("Chat not initialized");
     }
-
     const functionResponseParts = functionResponse.functionResponses.map((fr: { name: string; response: object; }) => ({
         functionResponse: {
             name: fr.name,
             response: fr.response,
         },
     }));
-
     const result = await chat.sendMessage({ message: functionResponseParts });
     return result;
 }

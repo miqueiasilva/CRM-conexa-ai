@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, BarChart3, Target, HelpCircle, Zap, FileText, MessageCircle } from 'lucide-react';
 
@@ -40,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
     <aside className="w-64 bg-card border-r border-border flex-shrink-0 flex flex-col">
       <div className="px-6 py-4 flex items-center">
         <Zap className="text-primary" size={28}/>
-        <h1 className="text-2xl font-bold ml-2 text-text-primary">Conexa.AI</h1>
+        <h1 className="text-2xl font-bold ml-2 text-text-primary">Convexa.AI</h1>
       </div>
 
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
@@ -94,4 +93,3 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
 };
 
 export default Sidebar;
-    
