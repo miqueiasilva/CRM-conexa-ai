@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -20,7 +21,6 @@ import LoginPage from './components/LoginPage';
 import HelpPage from './components/HelpPage';
 import { FUNNEL_STAGES } from './constants';
 
-// Dados iniciais para demonstração
 const initialLeadsData: Lead[] = [
   { id: 1, name: 'Ana Silva', whatsapp: '+5511987654321', origin: 'Instagram', status: LeadStatus.CAPTURADOS, value: 500, lastContact: 'Hoje' },
   { id: 2, name: 'Bruno Costa', whatsapp: '+5521912345678', origin: 'WhatsApp', status: LeadStatus.CAPTURADOS, value: 150, lastContact: 'Ontem' },
@@ -47,16 +47,14 @@ const initialAgent: AgentData = {
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // LOGIC: Estado centralizado de Leads e Agendamentos
   const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(false);
   
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  // LOGIC: Handlers de manipulação de dados
   const handleAddLead = (leadData: Omit<Lead, 'id' | 'status'>) => {
     const newLead: Lead = {
       ...leadData,
@@ -82,11 +80,10 @@ const App: React.FC = () => {
 
   const handleLogout = () => setIsAuthenticated(false);
 
-  // LOGIC: Renderização condicional baseada no estado activePage
   const renderContent = () => {
     switch (activePage) {
       case 'Início': return <HomePage setPage={setActivePage} />;
-      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuClick={() => setSidebarOpen(true)} />;
       case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
       case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
       case 'Criação de Agente': return <AgentCreator onSave={(data) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
@@ -104,17 +101,36 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-background text-text">
-      <Sidebar activePage={activePage} setPage={setActivePage} onLogout={handleLogout} />
-      <main className="flex-1 p-6 overflow-y-auto">
-        {renderContent()}
+    <div className="flex h-screen bg-background text-text overflow-hidden">
+      <Sidebar 
+        activePage={activePage} 
+        setPage={setActivePage} 
+        onLogout={handleLogout} 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative">
+        {/* Mobile Header Trigger for pages without internal dashboard headers */}
+        {!['DashboardCRM'].includes(activePage) && (
+          <div className="lg:hidden p-4 bg-white border-b border-border flex items-center">
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 -ml-2 text-text-secondary hover:text-primary transition-colors"
+            >
+              <BarChart className="rotate-90" size={24} />
+            </button>
+            <span className="ml-2 font-bold text-text-primary">{activePage}</span>
+          </div>
+        )}
+        <div className="p-4 md:p-6 lg:p-8">
+          {renderContent()}
+        </div>
       </main>
     </div>
   );
 };
 
-// Sub-componente Dashboard com lógica de estatísticas reais
-const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuClick: () => void }> = ({ leads, appointments, onMenuClick }) => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
@@ -122,12 +138,12 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
 
     return (
         <div className="animate-fade-in-up">
-            <Header />
+            <Header onMenuOpen={onMenuClick} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <StatCard title="Total de Leads" value={totalLeads} icon={<Users size={24} className="text-blue-500" />} color="#3B82F6" />
-                <StatCard title="Atendimentos" value={answeredLeads} icon={<MessageCircle size={24} className="text-green-500" />} color="#22C55E" />
-                <StatCard title="Conversão" value={`${conversionRate}%`} icon={<BarChart size={24} className="text-yellow-500" />} color="#F59E0B" />
-                <StatCard title="Agendamentos" value={appointments.length} icon={<DollarSign size={24} className="text-red-500" />} color="#EF4444" />
+                <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
+                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#22C55E" />
+                <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
+                <StatCard title="Agendamentos" value={appointments.length} icon="DollarSign" color="#EF4444" />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
@@ -144,7 +160,7 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
                                        <span className="text-sm font-black text-text-primary">{count}</span>
                                    </div>
                                    <div className="w-full bg-slate-100 rounded-full h-3">
-                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
+                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index % 3]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
                                    </div>
                                </div>
                            )})}
