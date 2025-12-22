@@ -18,7 +18,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, onClick, isSub
       isSubItem ? 'pl-12' : 'pl-4'
     } ${
       isActive
-        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200/50'
         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
     }`}
   >
@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
   return (
     <aside className="w-72 bg-white border-r border-slate-100 flex-shrink-0 flex flex-col shadow-sm">
       <div className="px-8 py-8 flex items-center gap-3">
-        <div className="p-2 bg-blue-600 rounded-lg shadow-md">
+        <div className="p-2 bg-blue-600 rounded-lg shadow-xl shadow-blue-100">
           <Zap className="text-white fill-white" size={24}/>
         </div>
         <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
@@ -51,8 +51,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         <NavItem icon={<MessageCircle size={20} />} label="WhatsApp" isActive={activePage === 'WhatsApp'} onClick={() => setPage('WhatsApp')} />
 
         <div className="pt-4">
-          <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            CRM Dashboard
+          <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+            CRM Inteligente
             {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {crmOpen && (
@@ -66,8 +66,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         </div>
         
         <div className="pt-4">
-          <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            SDR Inteligente
+          <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+            Agentes SDR
             {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {conexaAIOpen && (
@@ -82,9 +82,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
       <div className="p-4 mt-auto border-t border-slate-50">
         <button
           onClick={onLogout}
-          className="w-full flex items-center px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-colors"
+          className="w-full flex items-center px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-colors group"
         >
-          <LogOut size={20} className="mr-3" />
+          <LogOut size={20} className="mr-3 group-hover:-translate-x-1 transition-transform" />
           Sair da Conta
         </button>
       </div>

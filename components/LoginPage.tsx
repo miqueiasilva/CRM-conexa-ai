@@ -8,10 +8,10 @@ interface LoginPageProps {
 }
 
 const slogans = [
-  "Inteligência artificial para escalar seu atendimento.",
-  "Qualificação de leads em tempo real via WhatsApp.",
-  "SDR autônomo focado em conversão e agendamento.",
-  "Conexa.AI: O futuro do CRM conversacional está aqui."
+  "A inteligência que escala seu atendimento.",
+  "Qualificação de leads via WhatsApp em segundos.",
+  "SDR Autônomo focado em conversão real.",
+  "Conexa.AI: O futuro do CRM conversacional."
 ];
 
 const GoogleIcon = () => (
@@ -36,67 +36,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let particles: any[] = [];
-    const particleCount = 70;
-
-    const init = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      particles = [];
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          size: Math.random() * 2 + 1
-        });
-      }
-    };
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
-      });
-      requestAnimationFrame(animate);
-    };
-
-    init();
-    animate();
-    window.addEventListener('resize', init);
-    return () => window.removeEventListener('resize', init);
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -108,58 +47,68 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
+      {/* Lado Esquerdo - Branding Imersivo */}
       <div className="hidden md:flex md:w-1/2 bg-blue-600 relative items-center justify-center p-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-90" />
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
-        <div className="relative z-10 text-white text-center max-w-lg space-y-8">
-          <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] backdrop-blur-md border border-white/20 shadow-2xl animate-pulse-soft">
-            <Zap size={72} className="text-white fill-white" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-95" />
+        
+        {/* Elementos Decorativos de IA */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute top-10 left-10 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-700" />
+        </div>
+
+        <div className="relative z-10 text-white text-center max-w-lg space-y-10">
+          <div className="inline-flex p-6 bg-white/10 rounded-[3rem] backdrop-blur-xl border border-white/20 shadow-2xl">
+            <Zap size={80} className="text-white fill-white animate-pulse" />
           </div>
+          
           <div className="space-y-4">
-            <h1 className="text-7xl font-extrabold tracking-tighter">{APP_NAME}</h1>
-            <div className="h-20 flex items-center justify-center">
-              <p key={sloganIndex} className="text-2xl font-medium text-blue-50 leading-relaxed animate-fade-in-up">
+            <h1 className="text-8xl font-black tracking-tighter drop-shadow-lg">{APP_NAME}</h1>
+            <div className="h-24 flex items-center justify-center">
+              <p key={sloganIndex} className="text-3xl font-medium text-blue-50 leading-tight animate-fade-in-up">
                 {slogans[sloganIndex]}
               </p>
             </div>
           </div>
-          <div className="pt-12 grid grid-cols-2 gap-8 border-t border-white/10">
+
+          <div className="pt-16 grid grid-cols-2 gap-12 border-t border-white/10">
             <div className="text-left">
-              <span className="block text-3xl font-bold">15k+</span>
-              <span className="text-blue-200 text-sm">Empresas Conectadas</span>
+              <span className="block text-4xl font-black">20k+</span>
+              <span className="text-blue-200 text-sm font-bold uppercase tracking-widest">Leads Qualificados</span>
             </div>
             <div className="text-left">
-              <span className="block text-3xl font-bold">99.99%</span>
-              <span className="text-blue-200 text-sm">Uptime Conexa</span>
+              <span className="block text-4xl font-black">99.9%</span>
+              <span className="text-blue-200 text-sm font-bold uppercase tracking-widest">Taxa de Uptime</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-6 md:p-20 bg-slate-50">
+      {/* Lado Direito - Formulário Clean */}
+      <div className="flex-1 flex items-center justify-center p-6 md:p-24 bg-slate-50">
         <div className="w-full max-w-md animate-fade-in-up">
           <div className="md:hidden flex flex-col items-center mb-12">
-            <div className="p-3 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
+            <div className="p-4 bg-blue-600 rounded-3xl mb-4 shadow-xl shadow-blue-200">
               <Zap size={40} className="text-white fill-white" />
             </div>
-            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{APP_NAME}</h2>
+            <h2 className="text-5xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h2>
           </div>
 
-          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative">
-            <div className="mb-10">
-              <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Bem-vindo</h2>
-              <p className="text-slate-500 font-medium">Faça login para gerenciar seus agentes.</p>
+          <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-12 md:p-14 border border-slate-100 relative">
+            <div className="mb-12">
+              <h2 className="text-4xl font-black text-slate-900 mb-2">Bem-vindo.</h2>
+              <p className="text-slate-500 font-bold">Faça login para gerenciar sua inteligência.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">E-mail corporativo</label>
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">E-mail corporativo</label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={20} />
                   <input 
                     type="email" 
                     required 
-                    className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    className="w-full h-16 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300"
                     placeholder="exemplo@conexa.ai"
                     defaultValue="admin@conexa.ai"
                   />
@@ -168,22 +117,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center ml-1">
-                  <label className="text-sm font-bold text-slate-700">Senha de acesso</label>
-                  <a href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700">Recuperar</a>
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Senha secreta</label>
+                  <a href="#" className="text-xs font-black text-blue-600 hover:text-blue-700">Recuperar</a>
                 </div>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={20} />
                   <input 
                     type={showPassword ? "text" : "password"} 
                     required 
-                    className="w-full h-14 pl-14 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    className="w-full h-16 pl-14 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300"
                     placeholder="••••••••"
                     defaultValue="123456"
                   />
                   <button 
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
                   </button>
@@ -193,34 +142,34 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-200 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-70 group"
+                className="w-full h-18 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-2xl shadow-blue-200 flex items-center justify-center gap-3 transition-all active:scale-[0.97] disabled:opacity-70 group text-lg"
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={28} />
                 ) : (
                   <>
-                    Acessar Dashboard
-                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                    Acessar Painel
+                    <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>
             </form>
 
-            <div className="relative my-10 text-center">
+            <div className="relative my-12 text-center">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <span className="relative px-6 bg-white text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em]">ou continuar com</span>
+              <span className="relative px-6 bg-white text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Ou Conectar com</span>
             </div>
 
             <button
               type="button"
-              className="w-full h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98]"
+              className="w-full h-16 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.97]"
             >
               <GoogleIcon />
-              Google Business
+              Google Workspace
             </button>
           </div>
-          <p className="mt-8 text-center text-slate-400 text-xs font-medium uppercase tracking-widest">
-            Powered by Conexa AI Global Support
+          <p className="mt-10 text-center text-slate-300 text-[10px] font-black uppercase tracking-[0.3em]">
+            Conexa AI Ecosystem © 2024
           </p>
         </div>
       </div>
