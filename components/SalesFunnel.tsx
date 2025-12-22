@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Lead, LeadStatus } from '../types';
 import { FUNNEL_STAGES } from '../constants';
 import KanbanColumn from './KanbanColumn';
-import { Plus, MessageSquare, Download, Search, X } from 'lucide-react';
+import { Plus, Download, Search, X } from 'lucide-react';
 import LeadDetailModal from './LeadDetailModal';
 
 interface SalesFunnelProps {
@@ -17,8 +16,6 @@ interface SalesFunnelProps {
 const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, onDeleteLead, onUpdateLead }) => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // LOGIC: Estados para o Modal de Novo Lead
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newLeadForm, setNewLeadForm] = useState({ name: '', whatsapp: '', origin: 'Manual' });
 
@@ -91,7 +88,6 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
 
        <LeadDetailModal lead={selectedLead} onClose={handleCloseModal} onDelete={onDeleteLead} onUpdate={onUpdateLead} />
 
-       {/* LOGIC: Modal de Cadastro (Layout preservado) */}
        {isAddModalOpen && (
            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={() => setIsAddModalOpen(false)}>
                <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-10 animate-fade-in-up border border-slate-100" onClick={e => e.stopPropagation()}>

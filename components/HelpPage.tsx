@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, BookOpen, Bot, LayoutGrid, Mail, MessageSquare, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, BookOpen, Bot, LayoutGrid, Mail, MessageSquare, ChevronUp, LifeBuoy } from 'lucide-react';
 
 interface HelpPageProps {
     setPage: (page: string) => void;
@@ -8,95 +8,99 @@ interface HelpPageProps {
 const FaqItem: React.FC<{ question: string; children: React.ReactNode }> = ({ question, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="border-b border-border">
+        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden mb-3 transition-all">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex justify-between items-center text-left py-4 px-2 hover:bg-light rounded-md"
+                className="w-full flex justify-between items-center text-left py-5 px-6 hover:bg-slate-50 transition-colors"
             >
-                <span className="font-semibold text-text-primary">{question}</span>
-                {isOpen ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-text-secondary" />}
+                <span className="font-bold text-slate-900">{question}</span>
+                <div className={`p-1.5 rounded-full ${isOpen ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'} transition-all`}>
+                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </div>
             </button>
-            {isOpen && <div className="p-4 pt-0 text-text-secondary">{children}</div>}
+            {isOpen && (
+                <div className="px-6 pb-6 text-slate-500 font-medium leading-relaxed animate-fade-in-up">
+                    {children}
+                </div>
+            )}
         </div>
     );
 };
 
 const HelpPage: React.FC<HelpPageProps> = ({ setPage }) => {
     return (
-        <div className="bg-card p-8 rounded-lg shadow-sm max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-                <h1 className="text-4xl font-bold text-text-primary">Central de Ajuda</h1>
-                <p className="text-lg text-text-secondary mt-2">Como podemos te ajudar hoje?</p>
-                <div className="relative mt-6 max-w-lg mx-auto">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" size={20} />
+        <div className="max-w-5xl mx-auto py-8 animate-fade-in-up">
+            <div className="text-center mb-16">
+                <div className="inline-flex p-4 bg-blue-100 rounded-3xl text-blue-600 mb-6 shadow-sm">
+                    <LifeBuoy size={32} />
+                </div>
+                <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-4">Central de Ajuda</h1>
+                <p className="text-xl text-slate-500 font-medium">Tudo o que você precisa saber para escalar com IA.</p>
+                <div className="relative mt-10 max-w-xl mx-auto">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                     <input
                         type="text"
-                        placeholder="Pesquisar por tópicos..."
-                        className="w-full bg-light border border-border rounded-full py-3 pl-12 pr-4 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Como podemos te ajudar hoje?"
+                        className="w-full bg-white border border-slate-200 rounded-[2rem] py-5 pl-16 pr-8 text-slate-900 font-medium shadow-xl shadow-slate-200/40 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none"
                     />
                 </div>
             </div>
 
-            <section className="mb-12">
-                <h2 className="text-2xl font-bold text-text-primary mb-6">Primeiros Passos</h2>
-                <div className="grid md:grid-cols-3 gap-6">
-                    <div onClick={() => setPage('WhatsApp')} className="bg-light p-6 rounded-lg border border-border hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
-                        <BookOpen size={28} className="text-primary mb-4" />
-                        <h3 className="font-bold text-lg text-text-primary mb-2">Conectando seu WhatsApp</h3>
-                        <p className="text-sm text-text-secondary">Aprenda a integrar sua conta do WhatsApp para começar a automatizar.</p>
+            <div className="grid md:grid-cols-3 gap-6 mb-20">
+                <div onClick={() => setPage('WhatsApp')} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all cursor-pointer group">
+                    <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <BookOpen size={28} />
                     </div>
-                     <div onClick={() => setPage('Criação de Agente')} className="bg-light p-6 rounded-lg border border-border hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
-                        <Bot size={28} className="text-primary mb-4" />
-                        <h3 className="font-bold text-lg text-text-primary mb-2">Criando seu Agente de IA</h3>
-                        <p className="text-sm text-text-secondary">Siga o passo a passo para configurar seu primeiro assistente virtual.</p>
-                    </div>
-                    <div onClick={() => setPage('Quadro')} className="bg-light p-6 rounded-lg border border-border hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
-                        <LayoutGrid size={28} className="text-primary mb-4" />
-                        <h3 className="font-bold text-lg text-text-primary mb-2">Entendendo o Quadro CRM</h3>
-                        <p className="text-sm text-text-secondary">Descubra como gerenciar seus leads e visualizar seu funil de vendas.</p>
-                    </div>
+                    <h3 className="font-black text-xl text-slate-900 mb-2">WhatsApp</h3>
+                    <p className="text-sm text-slate-500 font-medium">Configuração de instâncias e conexão estável.</p>
                 </div>
-            </section>
+                <div onClick={() => setPage('Criação de Agente')} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all cursor-pointer group">
+                    <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <Bot size={28} />
+                    </div>
+                    <h3 className="font-black text-xl text-slate-900 mb-2">Agente IA</h3>
+                    <p className="text-sm text-slate-500 font-medium">Treinamento de base de conhecimento e tom de voz.</p>
+                </div>
+                <div onClick={() => setPage('Quadro')} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all cursor-pointer group">
+                    <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <LayoutGrid size={28} />
+                    </div>
+                    <h3 className="font-black text-xl text-slate-900 mb-2">CRM Quadro</h3>
+                    <p className="text-sm text-slate-500 font-medium">Gestão de leads e automação de vendas.</p>
+                </div>
+            </div>
 
-            <section className="mb-12">
-                <h2 className="text-2xl font-bold text-text-primary mb-4">Perguntas Frequentes (FAQ)</h2>
-                <div>
-                    <FaqItem question="Como a IA sabe o que responder?">
-                        <p>A IA é treinada com base nas informações que você fornece durante a criação do agente, incluindo o perfil da sua empresa, as etapas do fluxo de conversa e a base de conhecimento (perguntas e respostas). Ela utiliza essas informações para entender o contexto e formular respostas precisas e personalizadas.</p>
-                    </FaqItem>
-                    <FaqItem question="Posso ter mais de um número de WhatsApp conectado?">
-                        <p>Sim! Nossa plataforma permite que você conecte e gerencie múltiplas instâncias do WhatsApp. Você pode adicionar novas contas na página de "Integrações &gt; WhatsApp" e atribuir agentes de IA específicos para cada número, se desejar.</p>
-                    </FaqItem>
-                    <FaqItem question="Meus dados e conversas estão seguros?">
-                        <p>Absolutamente. A segurança é nossa prioridade máxima. Todas as conversas são criptografadas e seus dados são armazenados em servidores seguros, seguindo as melhores práticas de proteção de dados do mercado. Não compartilhamos suas informações com terceiros.</p>
-                    </FaqItem>
-                    <FaqItem question="O que acontece se a IA não souber responder uma pergunta?">
-                        <p>O agente de IA é projetado para lidar com uma vasta gama de perguntas com base no seu treinamento. No entanto, se encontrar uma pergunta que não consegue responder, o sistema pode ser configurado para transferir a conversa para um atendente humano (função "handover") ou responder com uma mensagem padrão, pedindo para o cliente reformular a pergunta.</p>
-                    </FaqItem>
-                </div>
-            </section>
-
-             <section>
-                <h2 className="text-2xl font-bold text-text-primary mb-6">Ainda precisa de ajuda?</h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-primary/10 p-6 rounded-lg border border-primary/20 flex items-start">
-                         <Mail size={24} className="text-primary mr-4 mt-1 flex-shrink-0" />
-                        <div>
-                            <h3 className="font-bold text-lg text-text-primary mb-1">Suporte via E-mail</h3>
-                            <p className="text-sm text-text-secondary mb-3">Envie sua dúvida para nossa equipe de especialistas. Respondemos em até 24h.</p>
-                            <a href="mailto:suporte@conexa.ai" className="font-semibold text-primary hover:underline">suporte@conexa.ai</a>
-                        </div>
-                    </div>
-                    <div className="bg-primary/10 p-6 rounded-lg border border-primary/20 flex items-start">
-                         <MessageSquare size={24} className="text-primary mr-4 mt-1 flex-shrink-0" />
-                        <div>
-                            <h3 className="font-bold text-lg text-text-primary mb-1">Comunidade no WhatsApp</h3>
-                            <p className="text-sm text-text-secondary mb-3">Participe do nosso grupo exclusivo para tirar dúvidas e trocar experiências com outros usuários.</p>
-                            <a href="#" className="font-semibold text-primary hover:underline">Entrar na comunidade</a>
-                        </div>
+            <div className="grid lg:grid-cols-3 gap-12">
+                <div className="lg:col-span-2">
+                    <h2 className="text-3xl font-black text-slate-900 mb-8">Dúvidas Frequentes</h2>
+                    <div className="space-y-4">
+                        <FaqItem question="Como a Jaci.AI qualifica meus leads?">
+                            <p>A Jaci.AI utiliza processamento de linguagem natural (LLM) para analisar as mensagens recebidas. Ela segue as instruções de fluxo que você define no Criador de Agente para extrair informações críticas como serviço desejado, urgência e orçamento.</p>
+                        </FaqItem>
+                        <FaqItem question="Quantos números posso conectar?">
+                            <p>No plano Convexa Base você pode conectar até 2 números. Para contas Enterprise o limite é customizado de acordo com sua operação de SDR.</p>
+                        </FaqItem>
+                        <FaqItem question="O sistema agenda direto no Google Calendar?">
+                            <p>Sim! Através da integração na página de Perfil da Empresa, você pode conectar sua agenda e a IA só oferecerá horários realmente disponíveis.</p>
+                        </FaqItem>
                     </div>
                 </div>
-            </section>
+                
+                <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white flex flex-col justify-center">
+                    <div className="p-4 bg-white/10 rounded-2xl w-fit mb-6">
+                        <MessageSquare size={32} className="text-blue-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Ainda com dúvidas?</h3>
+                    <p className="text-slate-400 font-medium mb-8">Nossa equipe de suporte técnico está pronta para te atender agora.</p>
+                    <a href="mailto:suporte@convexa.ai" className="bg-blue-600 text-white font-black py-4 px-6 rounded-2xl text-center shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all">Falar com Suporte</a>
+                    <div className="mt-8 pt-8 border-t border-white/10 flex items-center gap-4">
+                        <div className="flex -space-x-2">
+                            {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800"></div>)}
+                        </div>
+                        <span className="text-xs text-slate-400 font-bold">12 Especialistas Online</span>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

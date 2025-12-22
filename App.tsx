@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import StatCard from './components/StatCard';
@@ -21,7 +20,6 @@ import LoginPage from './components/LoginPage';
 import HelpPage from './components/HelpPage';
 import { FUNNEL_STAGES } from './constants';
 
-// Dados iniciais para demonstração
 const initialLeadsData: Lead[] = [
   { id: 1, name: 'Ana Silva', whatsapp: '+5511987654321', origin: 'Instagram', status: LeadStatus.CAPTURADOS, value: 500, lastContact: 'Hoje' },
   { id: 2, name: 'Bruno Costa', whatsapp: '+5521912345678', origin: 'WhatsApp', status: LeadStatus.CAPTURADOS, value: 150, lastContact: 'Ontem' },
@@ -48,15 +46,11 @@ const initialAgent: AgentData = {
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
-  
-  // LOGIC: Estado centralizado de Leads e Agendamentos
   const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  // LOGIC: Handlers de manipulação de dados
   const handleAddLead = (leadData: Omit<Lead, 'id' | 'status'>) => {
     const newLead: Lead = {
       ...leadData,
@@ -82,8 +76,11 @@ const App: React.FC = () => {
 
   const handleLogout = () => setIsAuthenticated(false);
 
-  // LOGIC: Renderização condicional baseada no estado activePage
   const renderContent = () => {
+    if (isEditingAgent && savedAgent) {
+        return <AgentEditPage agentToEdit={savedAgent} onSave={(data) => { setSavedAgent(data); setIsEditingAgent(false); }} onCancel={() => setIsEditingAgent(false)} />;
+    }
+
     switch (activePage) {
       case 'Início': return <HomePage setPage={setActivePage} />;
       case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
@@ -104,7 +101,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-background text-text">
+    <div className="flex h-screen bg-background text-text-primary">
       <Sidebar activePage={activePage} setPage={setActivePage} onLogout={handleLogout} />
       <main className="flex-1 p-6 overflow-y-auto">
         {renderContent()}
@@ -113,7 +110,6 @@ const App: React.FC = () => {
   );
 };
 
-// Sub-componente Dashboard com lógica de estatísticas reais
 const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const totalLeads = leads.length;
@@ -144,7 +140,7 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
                                        <span className="text-sm font-black text-text-primary">{count}</span>
                                    </div>
                                    <div className="w-full bg-slate-100 rounded-full h-3">
-                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
+                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index % 3]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
                                    </div>
                                </div>
                            )})}
