@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Lead, LeadStatus } from '../types';
 import LeadCard from './LeadCard';
 
@@ -10,67 +10,38 @@ interface KanbanColumnProps {
   onLeadClick: (lead: Lead) => void;
 }
 
-// Improved color scheme for better semantic meaning: yellow for new, blue for in-progress, green for success.
-const statusColors: Record<LeadStatus, { bg: string; text: string; border: string }> = {
-  [LeadStatus.CAPTURADOS]: { bg: 'bg-yellow-50', text: 'text-yellow-800', border: 'border-yellow-200' },
-  [LeadStatus.ATENDIDOS]: { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
-  [LeadStatus.VENDAS_REALIZADAS]: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
-};
-
-
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, leads, onLeadDrop, onLeadClick }) => {
-  const [isOver, setIsOver] = useState(false);
-  const colors = statusColors[title] || { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200' };
-  
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Necessário para permitir o drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const leadId = parseInt(e.dataTransfer.getData('leadId'), 10);
-    if (!isNaN(leadId)) {
-        onLeadDrop(leadId, title);
-    }
-    setIsOver(false);
+    onLeadDrop(leadId, title);
   };
-  
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsOver(false);
-  };
-
 
   return (
     <div 
-      className={`rounded-lg flex flex-col h-full transition-all duration-200 border-2 ${
-        isOver 
-            ? `bg-primary/5 border-primary border-dashed scale-[1.01]` 
-            : `bg-light border-transparent`
-      }`}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
+      className="bg-slate-100/50 rounded-[2.5rem] p-6 flex flex-col h-full min-w-[320px] border-2 border-transparent hover:border-blue-100 transition-colors"
     >
-      <div className={`p-3 rounded-t-lg border-b ${colors.bg} ${colors.border}`}>
-        <div className="flex justify-between items-center">
-             <h3 className={`font-bold text-sm uppercase ${colors.text}`}>{title}</h3>
-             <span className={`text-xs font-bold px-2 py-0.5 rounded-full bg-white/50 ${colors.text}`}>{leads.length}</span>
-        </div>
+      <div className="flex justify-between items-center mb-6 px-2">
+        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{title}</h3>
+        <span className="bg-white px-3 py-1 rounded-full text-xs font-black text-blue-600 shadow-sm border border-slate-100">
+          {leads.length}
+        </span>
       </div>
-      <div className="p-2 flex-grow h-0 overflow-y-auto">
-        {leads.length > 0 ? leads.map(lead => (
+      
+      <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
+        {leads.map(lead => (
           <LeadCard key={lead.id} lead={lead} onLeadClick={onLeadClick} />
-        )) : (
-            <div className={`h-full flex items-center justify-center text-sm text-text-secondary opacity-50 border-2 border-dashed border-gray-200 rounded-md m-2 ${isOver ? 'hidden' : ''}`}>
-                Arraste leads aqui
-            </div>
+        ))}
+        {leads.length === 0 && (
+          <div className="h-24 border-2 border-dashed border-slate-200 rounded-3xl flex items-center justify-center text-xs font-bold text-slate-300">
+            Arraste leads aqui
+          </div>
         )}
       </div>
     </div>

@@ -1,39 +1,34 @@
+
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { LEAD_SOURCES_DATA } from '../constants';
 
-const COLORS = ['#2563EB', '#10B981', '#F97316', '#8B5CF6'];
+const COLORS = ['#2563EB', '#10B981', '#F59E0B', '#6366F1'];
 
 const LeadSourceChart: React.FC = () => {
   return (
-    <div className="bg-card p-4 rounded-lg shadow-sm h-full">
-      <h2 className="text-lg font-bold mb-4 text-text-primary">Origem dos Leads</h2>
-      <div style={{ width: '100%', height: 260 }}>
-        <ResponsiveContainer>
+    <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 h-full">
+      <h2 className="text-lg font-black text-slate-900 mb-6">Origem dos Leads</h2>
+      <div className="h-[280px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={LEAD_SOURCES_DATA}
               cx="50%"
               cy="50%"
-              labelLine={false}
-              outerRadius={85}
-              fill="#8884d8"
+              innerRadius={60}
+              outerRadius={80}
+              paddingAngle={8}
               dataKey="value"
-              nameKey="name"
             >
-              {LEAD_SOURCES_DATA.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              {LEAD_SOURCES_DATA.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
               ))}
             </Pie>
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E5E7EB',
-                borderRadius: '0.5rem',
-                color: '#1F2937'
-              }}
+            <Tooltip 
+              contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
             />
-            <Legend iconSize={10} />
+            <Legend verticalAlign="bottom" iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
           </PieChart>
         </ResponsiveContainer>
       </div>

@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { Appointment } from '../types';
+import { Calendar } from 'lucide-react';
 
 interface AppointmentsListProps {
   appointments: Appointment[];
@@ -7,25 +9,39 @@ interface AppointmentsListProps {
 
 const AppointmentsList: React.FC<AppointmentsListProps> = ({ appointments }) => {
   return (
-    <div className="bg-card p-4 rounded-lg shadow-sm h-full">
-      <h2 className="text-lg font-bold mb-4 text-text-primary">Agendamentos Ativos</h2>
-      <ul className="space-y-3 h-64 overflow-y-auto pr-2">
-        {appointments.map(app => (
-          <li key={app.id} className="bg-light p-3 rounded-md border border-border">
-            <div className="flex justify-between items-center">
+    <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 h-full">
+      <div className="flex items-center gap-3 mb-6">
+        <Calendar size={20} className="text-blue-600" />
+        <h2 className="text-lg font-black text-slate-900">Agendamentos</h2>
+      </div>
+      
+      <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+        {appointments.length > 0 ? (
+          appointments.map(app => (
+            <div key={app.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all group">
+              <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-semibold text-text-primary text-sm">{app.leadName}</p>
-                  <p className="text-xs text-primary font-medium">{app.service}</p>
+                  <p className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{app.leadName}</p>
+                  <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tighter">{app.service}</p>
                 </div>
-                <span className="text-xs text-text-secondary text-right">
-                    {app.dateTime.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-                    <br/>
+                <div className="text-right">
+                  <p className="text-xs font-black text-slate-900">
+                    {app.dateTime.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-400 mt-1">
                     {app.dateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                </span>
+                  </p>
+                </div>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+            <Calendar size={32} className="mb-2 opacity-20" />
+            <p className="text-sm font-bold">Nenhum agendamento ativo</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
