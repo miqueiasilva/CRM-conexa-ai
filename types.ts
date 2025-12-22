@@ -5,6 +5,21 @@ export enum LeadStatus {
   VENDAS_REALIZADAS = 'Vendas Realizadas',
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface Stat {
+  title: string;
+  value: string | number;
+  icon: string;
+  color: string;
+}
+
 export interface Lead {
   id: number;
   name: string;
@@ -30,8 +45,9 @@ export interface FunctionCall {
 
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'ai';
+  sender: 'user' | 'ai' | 'me' | 'other';
   text: string;
+  time?: string;
   functionCall?: FunctionCall;
 }
 

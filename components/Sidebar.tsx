@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, BarChart3, Target, HelpCircle, Zap, FileText, MessageCircle } from 'lucide-react';
+import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, Target, Zap, FileText, MessageCircle } from 'lucide-react';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         <div className="pt-4">
           <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
             Nextrack CRM
-            {crmOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {crmOpen && (
             <div className="space-y-1">
@@ -66,8 +66,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         
         <div className="pt-4">
           <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            NextlA
-            {conexaAIOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            NextIA
+            {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {conexaAIOpen && (
             <div className="space-y-1">
