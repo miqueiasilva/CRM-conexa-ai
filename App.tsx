@@ -17,22 +17,15 @@ import Suggestions from './components/Suggestions';
 import ChatListPage from './components/ChatListPage';
 import HomePage from './components/HomePage';
 import AgentEditPage from './components/AgentEditPage';
-import LoginPage from './components/LoginPage'; // Import the new LoginPage
+import LoginPage from './components/LoginPage';
 import HelpPage from './components/HelpPage';
 import { FUNNEL_STAGES } from './constants';
 
-const initialLeads: Lead[] = [
+// Dados iniciais para demonstração
+const initialLeadsData: Lead[] = [
   { id: 1, name: 'Ana Silva', whatsapp: '+5511987654321', origin: 'Instagram', status: LeadStatus.CAPTURADOS, value: 500, lastContact: 'Hoje' },
   { id: 2, name: 'Bruno Costa', whatsapp: '+5521912345678', origin: 'WhatsApp', status: LeadStatus.CAPTURADOS, value: 150, lastContact: 'Ontem' },
   { id: 3, name: 'Carla Dias', whatsapp: '+5531988887777', origin: 'Facebook', status: LeadStatus.ATENDIDOS, value: 80, lastContact: '2 dias atrás' },
-  { id: 4, name: 'Daniel Alves', whatsapp: '+5551999991111', origin: 'Indicação', status: LeadStatus.VENDAS_REALIZADAS, value: 450, lastContact: 'Semana passada' },
-  { id: 5, name: 'Eduarda Lima', whatsapp: '+5541977773333', origin: 'WhatsApp', status: LeadStatus.ATENDIDOS, value: 300, lastContact: 'Hoje' },
-];
-
-const initialAppointments: Appointment[] = [
-  { id: 1, leadName: 'Carla Dias', service: 'Micropigmentação', professional: 'Jacilene Félix', dateTime: new Date(new Date().setDate(new Date().getDate() + 1)) },
-  { id: 2, leadName: 'Eduarda Lima', service: 'Limpeza de Pele', professional: 'Ana', dateTime: new Date(new Date().setDate(new Date().getDate() + 2)) },
-  { id: 3, leadName: 'Daniel Alves', service: 'Design de Sobrancelhas', professional: 'Jacilene Félix', dateTime: new Date(new Date().setDate(new Date().getDate() + 2)) },
 ];
 
 const initialAgent: AgentData = {
@@ -45,114 +38,70 @@ const initialAgent: AgentData = {
     whatsappNumber: '+5511987654321',
     companyName: 'Studio Jacilene Félix',
     industry: 'Saúde e Beleza',
-    companyDescription: 'Studio especializado em micropigmentação e design de sobrancelhas, liderado por Jacilene Félix. Nosso objetivo é realçar a beleza natural com técnicas modernas e seguras.',
+    companyDescription: 'Studio especializado em micropigmentação e design de sobrancelhas.',
     companyAddress: 'Rua da Beleza, 123 - São Paulo, SP',
-    workingHours: {
-        'Segunda-feira': true, 'Terça-feira': true, 'Quarta-feira': true,
-        'Quinta-feira': true, 'Sexta-feira': true, 'Sábado': false, 'Domingo': false,
-    },
-    flowSteps: [
-        { name: 'Saudação', instruction: 'Dê as boas-vindas ao cliente e se apresente como Jaci.AI.' },
-        { name: 'Qualificação', instruction: 'Pergunte qual serviço o cliente tem interesse.' },
-        { name: 'Apresentação', instruction: 'Apresente o serviço solicitado e seu preço.' },
-        { name: 'Agendamento', instruction: 'Pergunte a melhor data e hora para o cliente.' },
-        { name: 'Confirmação', instruction: 'Confirme o agendamento e solicite o sinal via PIX.' },
-    ],
-    knowledgeBase: [
-        { question: 'Quanto custa a Micropigmentação?', answer: 'Custa R$ 500.' },
-        { question: 'Qual o preço do Design de Sobrancelhas?', answer: 'Custa R$ 80.' },
-        { question: 'Qual o valor da Micropigmentação Labial?', answer: 'Custa R$ 450.' },
-        { question: 'Quanto é a Limpeza de Pele?', answer: 'Custa R$ 150.' },
-    ]
+    workingHours: { 'Segunda-feira': true, 'Terça-feira': true, 'Quarta-feira': true, 'Quinta-feira': true, 'Sexta-feira': true, 'Sábado': false, 'Domingo': false },
+    flowSteps: [],
+    knowledgeBase: []
 };
 
-
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
-  const [leads, setLeads] = useState<Lead[]>(initialLeads);
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  
+  // LOGIC: Estado centralizado de Leads e Agendamentos
+  const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  useEffect(() => {
-    if (activePage !== 'Info do Agente') {
-      setIsEditingAgent(false);
-    }
-  }, [activePage]);
-
-  const addLead = (leadData: Omit<Lead, 'id' | 'status'>) => {
-    setLeads(prevLeads => [
-      ...prevLeads,
-      { ...leadData, id: prevLeads.length + 1, status: LeadStatus.CAPTURADOS, value: 0, lastContact: 'Agora' }
-    ]);
+  // LOGIC: Handlers de manipulação de dados
+  const handleAddLead = (leadData: Omit<Lead, 'id' | 'status'>) => {
+    const newLead: Lead = {
+      ...leadData,
+      id: Date.now(),
+      status: LeadStatus.CAPTURADOS,
+      value: leadData.value || 0,
+      lastContact: 'Agora'
+    };
+    setLeads(prev => [newLead, ...prev]);
   };
 
-  const deleteLead = (leadId: number) => {
-    setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
+  const handleUpdateLead = (updatedLead: Lead) => {
+    setLeads(prev => prev.map(lead => lead.id === updatedLead.id ? updatedLead : lead));
   };
 
-  const addAppointment = (appointmentData: Omit<Appointment, 'id'>) => {
-    setAppointments(prevAppointments => [
-      ...prevAppointments,
-      { ...appointmentData, id: prevAppointments.length + 1 }
-    ]);
+  const handleDeleteLead = (leadId: number) => {
+    setLeads(prev => prev.filter(lead => lead.id !== leadId));
   };
 
   const handleLeadDrop = (leadId: number, newStatus: LeadStatus) => {
-    setLeads(prevLeads => prevLeads.map(lead =>
-      lead.id === leadId ? { ...lead, status: newStatus } : lead
-    ));
-  };
-  
-  const handleSaveAgent = (agentData: AgentData) => {
-    setSavedAgent(agentData);
-    setIsEditingAgent(false);
-    setActivePage('Info do Agente');
+    setLeads(prev => prev.map(lead => lead.id === leadId ? { ...lead, status: newStatus } : lead));
   };
 
-  const handleCancelEdit = () => {
-    setIsEditingAgent(false);
-  };
-  
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const handleLogout = () => setIsAuthenticated(false);
+
+  // LOGIC: Renderização condicional baseada no estado activePage
+  const renderContent = () => {
+    switch (activePage) {
+      case 'Início': return <HomePage setPage={setActivePage} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
+      case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
+      case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app: Omit<Appointment, 'id'>) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
+      case 'Criação de Agente': return <AgentCreator onSave={(data: AgentData) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
+      case 'Info do Agente': return <AgentInfoPage agent={savedAgent} onEdit={() => setIsEditingAgent(true)} />;
+      case 'WhatsApp': return <WhatsApp />;
+      case 'Disparo': return <MessagePage />;
+      case 'Mensagem': return <ChatListPage />;
+      case 'Ajuda': return <HelpPage setPage={setActivePage} />;
+      default: return <HomePage setPage={setActivePage} />;
+    }
   };
 
-  // Render login page if not authenticated
   if (!isAuthenticated) {
     return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
   }
-
-  const renderContent = () => {
-    switch (activePage) {
-      case 'Início':
-        return <HomePage setPage={setActivePage} />;
-      case 'DashboardCRM':
-        return <Dashboard leads={leads} appointments={appointments} />;
-      case 'Quadro':
-        return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={addLead} onDeleteLead={deleteLead} />;
-      case 'Simulador':
-        return <ChatInterface addLead={addLead} addAppointment={addAppointment} />;
-      case 'Criação de Agente':
-        return <AgentCreator onSave={handleSaveAgent} />;
-      case 'Info do Agente':
-        if (isEditingAgent && savedAgent) {
-          return <AgentEditPage agentToEdit={savedAgent} onSave={handleSaveAgent} onCancel={handleCancelEdit} />;
-        }
-        return <AgentInfoPage agent={savedAgent} onEdit={() => setIsEditingAgent(true)} />;
-      case 'WhatsApp':
-        return <WhatsApp />;
-      case 'Disparo':
-        return <MessagePage />;
-      case 'Mensagem':
-        return <ChatListPage />;
-      case 'Ajuda':
-        return <HelpPage setPage={setActivePage} />;
-      default:
-        return <HomePage setPage={setActivePage} />;
-    }
-  };
 
   return (
     <div className="flex h-screen bg-background text-text">
@@ -164,51 +113,41 @@ const App: React.FC = () => {
   );
 };
 
-interface DashboardProps {
-    leads: Lead[];
-    appointments: Appointment[];
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ leads, appointments }) => {
+// Sub-componente Dashboard com lógica de estatísticas reais
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
-    const activeAppointments = appointments.length;
-
-    const funnelCounts = FUNNEL_STAGES.reduce((acc, stage) => {
-        acc[stage] = leads.filter(lead => lead.status === stage).length;
-        return acc;
-    }, {} as Record<LeadStatus, number>);
 
     return (
-        <div>
+        <div className="animate-fade-in-up">
             <Header />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <StatCard title="Total de Leads" value={totalLeads} icon={<Users size={24} className="text-blue-500" />} color="#3B82F6" />
                 <StatCard title="Atendimentos" value={answeredLeads} icon={<MessageCircle size={24} className="text-green-500" />} color="#22C55E" />
                 <StatCard title="Conversão" value={`${conversionRate}%`} icon={<BarChart size={24} className="text-yellow-500" />} color="#F59E0B" />
-                <StatCard title="Agendamentos" value={activeAppointments} icon={<DollarSign size={24} className="text-red-500" />} color="#EF4444" />
+                <StatCard title="Agendamentos" value={appointments.length} icon={<DollarSign size={24} className="text-red-500" />} color="#EF4444" />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
-                    <div className="bg-card p-4 rounded-lg shadow-sm h-full">
-                       <h2 className="text-xl font-bold mb-4 text-text-primary">Funil de Vendas Resumido</h2>
-                       <div className="space-y-3">
-                           {FUNNEL_STAGES.map((stage, index) => (
+                    <div className="bg-card p-6 rounded-lg shadow-sm h-full border border-border">
+                       <h2 className="text-xl font-bold mb-6 text-text-primary">Funil de Vendas</h2>
+                       <div className="space-y-6">
+                           {FUNNEL_STAGES.map((stage: LeadStatus, index: number) => {
+                               const count = leads.filter(l => l.status === stage).length;
+                               const perc = totalLeads > 0 ? (count / totalLeads) * 100 : 0;
+                               return (
                                <div key={stage}>
-                                   <div className="flex justify-between items-center mb-1">
-                                       <span className="text-sm font-medium text-text-secondary">{stage}</span>
-                                       <span className="text-sm font-bold text-text-primary">{funnelCounts[stage]} leads</span>
+                                   <div className="flex justify-between items-center mb-2">
+                                       <span className="text-sm font-bold text-text-secondary uppercase tracking-wider">{stage}</span>
+                                       <span className="text-sm font-black text-text-primary">{count}</span>
                                    </div>
-                                   <div className="w-full bg-light rounded-full h-2.5">
-                                       <div
-                                        className={`${['bg-yellow-400', 'bg-blue-400', 'bg-green-400'][index] || 'bg-gray-400'} h-2.5 rounded-full`}
-                                        style={{ width: `${totalLeads > 0 ? (funnelCounts[stage] / totalLeads) * 100 : 0}%` }}
-                                       ></div>
+                                   <div className="w-full bg-slate-100 rounded-full h-3">
+                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
                                    </div>
                                </div>
-                           ))}
+                           )})}
                        </div>
                     </div>
                 </div>

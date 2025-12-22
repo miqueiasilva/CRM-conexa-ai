@@ -11,31 +11,32 @@ interface SalesFunnelProps {
   onLeadDrop: (leadId: number, newStatus: LeadStatus) => void;
   addLead: (lead: Omit<Lead, 'id' | 'status'>) => void;
   onDeleteLead: (leadId: number) => void;
+  onUpdateLead: (lead: Lead) => void;
 }
 
-const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, onDeleteLead }) => {
+const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, onDeleteLead, onUpdateLead }) => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // LOGIC: Estados para o Modal de Novo Lead
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newLeadForm, setNewLeadForm] = useState({ name: '', whatsapp: '', origin: 'Manual' });
 
-  const handleLeadClick = (lead: Lead) => {
-    setSelectedLead(lead);
-  };
+  const handleCloseModal = () => setSelectedLead(null);
 
-  const handleCloseModal = () => {
-    setSelectedLead(null);
-  };
-
-  const handleQuickAddLead = () => {
-    const name = window.prompt("Nome do novo lead:");
-    if (name && name.trim()) {
-        addLead({
-            name: name.trim(),
-            whatsapp: "",
-            origin: "Manual",
-            value: 0,
-            lastContact: "Agora"
-        });
-    }
+  const handleSubmitNewLead = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (newLeadForm.name.trim()) {
+          addLead({
+              name: newLeadForm.name.trim(),
+              whatsapp: newLeadForm.whatsapp.trim(),
+              origin: newLeadForm.origin,
+              value: 0,
+              lastContact: "Agora"
+          });
+          setIsAddModalOpen(false);
+          setNewLeadForm({ name: '', whatsapp: '', origin: 'Manual' });
+      }
   };
 
   const filteredLeads = leads.filter(lead => 
@@ -44,70 +45,77 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
   );
 
   return (
-    <div className="h-full flex flex-col">
-       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div className="h-full flex flex-col animate-fade-in-up">
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h1 className="text-3xl font-bold text-text-primary">Quadro CRM</h1>
-                <p className="text-text-secondary text-sm">Gerencie seus leads e oportunidades.</p>
+                <h1 className="text-4xl font-black text-slate-900 tracking-tight">Quadro CRM</h1>
+                <p className="text-slate-500 font-medium">Gestão inteligente de oportunidades.</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                {/* Search Input with Clear Button */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
                     <input 
                         type="text" 
                         placeholder="Pesquisar leads..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full sm:w-64 bg-card border border-border rounded-lg py-2 pl-10 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all"
+                        className="w-full sm:w-72 bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-10 text-slate-900 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all shadow-sm font-medium"
                     />
-                    {searchTerm && (
-                        <button 
-                            onClick={() => setSearchTerm('')}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary p-1 rounded-full hover:bg-gray-100"
-                        >
-                            <X size={14} />
-                        </button>
-                    )}
+                    {searchTerm && <X size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer" onClick={() => setSearchTerm('')} />}
                 </div>
 
-                <div className="flex space-x-2">
-                    {/* Quick Action Button */}
+                <div className="flex gap-2">
                     <button 
-                        onClick={handleQuickAddLead}
-                        className="flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium"
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 font-bold flex items-center justify-center gap-2"
                     >
-                        <Plus size={18} className="mr-2"/>
-                        Novo Lead
+                        <Plus size={20}/> Novo Lead
                     </button>
-                    
-                    <button className="flex items-center bg-white text-text-primary border border-border px-3 py-2 rounded-lg shadow-sm hover:bg-light transition-colors" title="Mensagem em massa">
-                        <MessageSquare size={18} />
-                    </button>
-                    <button className="flex items-center bg-white text-text-primary border border-border px-3 py-2 rounded-lg shadow-sm hover:bg-light transition-colors" title="Exportar CSV">
-                        <Download size={18} />
-                    </button>
+                    <button className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"><Download size={20} /></button>
                 </div>
             </div>
         </div>
 
-      <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
-        {FUNNEL_STAGES.map(status => (
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-8 overflow-x-auto pb-4">
+        {FUNNEL_STAGES.map((status: LeadStatus) => (
           <KanbanColumn 
             key={status}
             title={status} 
             leads={filteredLeads.filter(lead => lead.status === status)}
             onLeadDrop={onLeadDrop}
-            onLeadClick={handleLeadClick}
+            onLeadClick={setSelectedLead}
           />
         ))}
       </div>
-       <LeadDetailModal 
-            lead={selectedLead} 
-            onClose={handleCloseModal} 
-            onDelete={onDeleteLead}
-       />
+
+       <LeadDetailModal lead={selectedLead} onClose={handleCloseModal} onDelete={onDeleteLead} onUpdate={onUpdateLead} />
+
+       {/* LOGIC: Modal de Cadastro (Layout preservado) */}
+       {isAddModalOpen && (
+           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={() => setIsAddModalOpen(false)}>
+               <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md p-10 animate-fade-in-up border border-slate-100" onClick={e => e.stopPropagation()}>
+                   <div className="mb-8">
+                       <h2 className="text-3xl font-black text-slate-900 mb-2">Novo Lead</h2>
+                       <p className="text-slate-500 font-medium text-sm">Insira os dados manualmente no CRM.</p>
+                   </div>
+                   <form onSubmit={handleSubmitNewLead} className="space-y-6">
+                       <div className="space-y-2">
+                           <label className="text-sm font-bold text-slate-700 ml-1">Nome Completo</label>
+                           <input type="text" required value={newLeadForm.name} onChange={e => setNewLeadForm({...newLeadForm, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:ring-4 focus:ring-blue-100 outline-none" placeholder="Ex: João Silva" />
+                       </div>
+                       <div className="space-y-2">
+                           <label className="text-sm font-bold text-slate-700 ml-1">WhatsApp</label>
+                           <input type="tel" value={newLeadForm.whatsapp} onChange={e => setNewLeadForm({...newLeadForm, whatsapp: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:ring-4 focus:ring-blue-100 outline-none" placeholder="5511..." />
+                       </div>
+                       <div className="flex gap-4 pt-4">
+                           <button type="button" onClick={() => setIsAddModalOpen(false)} className="flex-1 py-4 font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+                           <button type="submit" className="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">Salvar Lead</button>
+                       </div>
+                   </form>
+               </div>
+           </div>
+       )}
     </div>
   );
 };
