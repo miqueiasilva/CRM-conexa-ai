@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Lead, LeadStatus } from '../types';
 import { FUNNEL_STAGES } from '../constants';
