@@ -14,34 +14,34 @@ const Header: React.FC<HeaderProps> = ({
   subtitle = "Bem-vindo ao centro de comando Convexa." 
 }) => {
   return (
-    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 px-2 animate-fade-in-up">
-      <div className="flex items-center gap-4 w-full sm:w-auto">
+    <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2 animate-fade-in-up">
+      <div className="flex items-center gap-4 w-full md:w-auto">
         {onMenuOpen && (
           <button 
             onClick={onMenuOpen}
-            className="lg:hidden p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all"
+            className="lg:hidden p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-95"
           >
             <Menu size={24} />
           </button>
         )}
-        <div>
-          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{title}</h1>
-          <p className="text-slate-500 font-medium text-sm md:text-base">{subtitle}</p>
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
+          <p className="text-slate-500 font-medium text-sm md:text-base truncate">{subtitle}</p>
         </div>
       </div>
       
-      <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+      <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto justify-end">
         <div className="hidden lg:flex relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
           <input 
             type="text" 
             placeholder="Buscar em tudo..." 
-            className="bg-white border border-slate-200 rounded-2xl py-2.5 pl-12 pr-4 text-sm font-medium focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none w-48 xl:w-64"
+            className="bg-white border border-slate-200 rounded-2xl py-2.5 pl-12 pr-4 text-sm font-medium focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none w-48 xl:w-64 shadow-sm"
           />
         </div>
         
-        <div className="flex items-center gap-3 ml-auto sm:ml-0">
-            <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all relative">
+        <div className="flex items-center gap-2 md:gap-3">
+            <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-100 hover:bg-blue-50 transition-all relative shadow-sm">
                 <Bell size={20} />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>

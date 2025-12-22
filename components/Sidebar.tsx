@@ -41,22 +41,25 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
 
   const handlePageSelect = (page: string) => {
     setPage(page);
-    onClose(); // Fecha a sidebar no mobile ao selecionar
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
   };
 
   return (
     <>
-      {/* Overlay para Mobile */}
+      {/* Overlay - Mobile Only */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
+      {/* Sidebar Container */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 flex-shrink-0 flex flex-col shadow-xl lg:shadow-sm
-        transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static
+        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 flex flex-col shadow-2xl lg:shadow-sm
+        transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="px-8 py-8 flex items-center justify-between">
@@ -66,7 +69,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
           </div>
-          <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-slate-900">
+          <button 
+            onClick={onClose}
+            className="lg:hidden p-2 text-slate-400 hover:text-slate-900 transition-colors"
+          >
             <X size={24} />
           </button>
         </div>

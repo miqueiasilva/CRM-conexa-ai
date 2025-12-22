@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -7,8 +8,7 @@ import AppointmentsList from './components/AppointmentsList';
 import LeadSourceChart from './components/LeadSourceChart';
 import ChatInterface from './components/ChatInterface';
 import { Lead, Appointment, LeadStatus, AgentData } from './types';
-/* Added Menu to the icons import */
-import { BarChart, Users, DollarSign, MessageCircle, Menu } from 'lucide-react';
+import { BarChart, Users, DollarSign, MessageCircle } from 'lucide-react';
 import AgentCreator from './components/AgentCreator';
 import AgentInfoPage from './components/AgentInfoPage';
 import WhatsApp from './components/WhatsApp';
@@ -48,8 +48,10 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
@@ -80,21 +82,21 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (isEditingAgent && savedAgent) {
-        return <AgentEditPage agentToEdit={savedAgent} onSave={(data: AgentData) => { setSavedAgent(data); setIsEditingAgent(false); }} onCancel={() => setIsEditingAgent(false)} />;
+        return <AgentEditPage agentToEdit={savedAgent} onSave={(data) => { setSavedAgent(data); setIsEditingAgent(false); }} onCancel={() => setIsEditingAgent(false)} />;
     }
 
     switch (activePage) {
-      case 'Início': return <HomePage setPage={(page: string) => setActivePage(page)} />;
+      case 'Início': return <HomePage setPage={setActivePage} />;
       case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuOpen={() => setIsSidebarOpen(true)} />;
-      case 'Quadro': return <div className="h-full overflow-hidden"><SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} /></div>;
-      case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app: Omit<Appointment, 'id'>) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
-      case 'Criação de Agente': return <AgentCreator onSave={(data: AgentData) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
+      case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
+      case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
+      case 'Criação de Agente': return <AgentCreator onSave={(data) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
       case 'Info do Agente': return <AgentInfoPage agent={savedAgent} onEdit={() => setIsEditingAgent(true)} />;
       case 'WhatsApp': return <WhatsApp />;
       case 'Disparo': return <MessagePage />;
       case 'Mensagem': return <ChatListPage />;
-      case 'Ajuda': return <HelpPage setPage={(page: string) => setActivePage(page)} />;
-      default: return <HomePage setPage={(page: string) => setActivePage(page)} />;
+      case 'Ajuda': return <HelpPage setPage={setActivePage} />;
+      default: return <HomePage setPage={setActivePage} />;
     }
   };
 
@@ -108,23 +110,15 @@ const App: React.FC = () => {
         activePage={activePage} 
         setPage={setActivePage} 
         onLogout={handleLogout} 
-        isOpen={isSidebarOpen}
+        isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)}
       />
-      <main className="flex-1 p-4 md:p-6 overflow-y-auto relative">
-        {/* Botão de Menu Flutuante para páginas que não possuem Header integrado */}
-        {activePage !== 'DashboardCRM' && (
-          <button 
-            onClick={() => setIsSidebarOpen(true)}
-            className="lg:hidden absolute top-4 left-4 p-2 bg-white border border-slate-200 rounded-xl text-slate-600 z-30 shadow-sm"
-          >
-            <Menu size={24} />
-          </button>
-        )}
-        <div className={activePage !== 'DashboardCRM' ? 'pt-12 lg:pt-0' : ''}>
+      
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
           {renderContent()}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
@@ -140,7 +134,7 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOp
             <Header onMenuOpen={onMenuOpen} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
                 <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
-                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#22C55E" />
+                <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#10B981" />
                 <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
                 <StatCard title="Agendamentos" value={appointments.length} icon="DollarSign" color="#EF4444" />
             </div>
@@ -149,7 +143,7 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOp
                     <div className="bg-white p-6 rounded-[2rem] shadow-sm h-full border border-slate-100">
                        <h2 className="text-xl font-black mb-6 text-slate-900">Funil de Vendas</h2>
                        <div className="space-y-6">
-                           {FUNNEL_STAGES.map((stage: LeadStatus, index: number) => {
+                           {FUNNEL_STAGES.map((stage, index) => {
                                const count = leads.filter(l => l.status === stage).length;
                                const perc = totalLeads > 0 ? (count / totalLeads) * 100 : 0;
                                return (
@@ -168,9 +162,7 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOp
                 </div>
                 <div className="space-y-6">
                     <AppointmentsList appointments={appointments} />
-                    <div className="hidden sm:block">
-                        <LeadSourceChart />
-                    </div>
+                    <LeadSourceChart />
                 </div>
             </div>
             {showSuggestions && <Suggestions onClose={() => setShowSuggestions(false)} />}
