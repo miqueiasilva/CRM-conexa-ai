@@ -1,29 +1,28 @@
-
 import React, { useState, useEffect } from 'react';
 import { Lead } from '../types';
-import { X, Phone, MapPin, Tag, Trash2, AlertTriangle, Calendar, DollarSign, Save, Edit2, Loader2 } from 'lucide-react';
+import { X, Phone, MapPin, Tag, Trash2, AlertTriangle, Calendar, DollarSign, Save, Edit2 } from 'lucide-react';
 
 interface LeadDetailModalProps {
   lead: Lead | null;
   onClose: () => void;
   onDelete?: (id: number) => void;
-  onUpdate?: (lead: Lead) => Promise<void> | void;
+  onUpdate?: (lead: Lead) => void;
 }
 
 const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDelete, onUpdate }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   
+  // Local state for editing fields
   const [editedName, setEditedName] = useState('');
   const [editedWhatsapp, setEditedWhatsapp] = useState('');
   const [editedOrigin, setEditedOrigin] = useState('');
   const [editedValue, setEditedValue] = useState<number>(0);
 
+  // Sync state when lead opens or changes
   useEffect(() => {
     setIsDeleting(false);
     setIsEditing(false);
-    setIsSaving(false);
     if (lead) {
         setEditedName(lead.name);
         setEditedWhatsapp(lead.whatsapp);
@@ -45,27 +44,17 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
     }
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = () => {
       if (onUpdate) {
-          setIsSaving(true);
-          try {
-              await onUpdate({
-                  ...lead,
-                  name: editedName,
-                  whatsapp: editedWhatsapp,
-                  origin: editedOrigin,
-                  value: editedValue
-              });
-              setIsEditing(false);
-          } catch (error) {
-              console.error("Erro ao atualizar lead", error);
-              alert("Erro ao salvar alterações.");
-          } finally {
-              setIsSaving(false);
-          }
-      } else {
-          setIsEditing(false);
+          onUpdate({
+              ...lead,
+              name: editedName,
+              whatsapp: editedWhatsapp,
+              origin: editedOrigin,
+              value: editedValue
+          });
       }
+      setIsEditing(false);
   };
 
   const handleWhatsAppClick = () => {
@@ -73,6 +62,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
           alert("Este lead não possui número de WhatsApp cadastrado.");
           return;
       }
+      // Remove non-numeric characters
       const cleanNumber = lead.whatsapp.replace(/\D/g, '');
       if (cleanNumber) {
           window.open(`https://wa.me/${cleanNumber}`, '_blank');
@@ -86,13 +76,10 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
     : 'R$ 0,00';
 
   return (
-    <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4" 
-        style={{ zIndex: 9999 }}
-        onClick={onClose}
-    >
-      <div className="bg-card rounded-xl shadow-2xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-100" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
+      <div className="bg-card rounded-xl shadow-2xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         
+        {/* Header */}
         <div className="bg-primary/5 p-6 border-b border-border flex justify-between items-start">
              <div className="flex items-center w-full">
                 <div className="w-14 h-14 rounded-full bg-white border-2 border-primary text-primary flex items-center justify-center font-bold text-2xl flex-shrink-0 mr-4 shadow-sm">
@@ -104,9 +91,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                             type="text" 
                             value={editedName}
                             onChange={(e) => setEditedName(e.target.value)}
-                            className="text-xl font-bold text-text-primary bg-white border-2 border-primary/20 rounded p-1.5 w-full focus:border-primary outline-none"
-                            placeholder="Nome do Lead"
-                            autoFocus
+                            className="text-xl font-bold text-text-primary bg-white border border-border rounded p-1 w-full"
                         />
                     ) : (
                         <h2 className="text-2xl font-bold text-text-primary leading-tight">{lead.name}</h2>
@@ -119,6 +104,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
             </button>
         </div>
 
+        {/* Content */}
         <div className="p-6 space-y-6 overflow-y-auto">
             <div className="grid grid-cols-2 gap-4">
                  <div className="bg-light p-3 rounded-lg border border-border">
@@ -137,7 +123,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                                 type="number" 
                                 value={editedValue}
                                 onChange={(e) => setEditedValue(Number(e.target.value))}
-                                className="bg-white border border-border rounded p-1 w-full text-sm focus:border-primary outline-none"
+                                className="bg-white border border-border rounded p-1 w-24 text-sm"
                             />
                         ) : (
                             formattedValue
@@ -156,7 +142,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                             type="tel" 
                             value={editedWhatsapp}
                             onChange={(e) => setEditedWhatsapp(e.target.value)}
-                            className="bg-white border border-border rounded p-1 w-full focus:border-primary outline-none"
+                            className="bg-white border border-border rounded p-1 w-full"
                             placeholder="WhatsApp"
                         />
                     ) : (
@@ -168,11 +154,11 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                     <MapPin size={20} className="mr-3 text-text-secondary"/>
                     {isEditing ? (
                         <div className="flex-1 flex items-center">
-                            <span className="mr-2 text-sm whitespace-nowrap">Origem:</span>
+                            <span className="mr-2">Origem:</span>
                             <select 
                                 value={editedOrigin}
                                 onChange={(e) => setEditedOrigin(e.target.value)}
-                                className="bg-white border border-border rounded p-1 flex-1 focus:border-primary outline-none"
+                                className="bg-white border border-border rounded p-1 flex-1"
                             >
                                 <option value="Manual">Manual</option>
                                 <option value="Instagram">Instagram</option>
@@ -197,8 +183,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                 <div className="flex space-x-2">
                     <button 
                         onClick={handleWhatsAppClick}
-                        className="flex-1 bg-green-500 text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center shadow-sm"
-                        disabled={isEditing}
+                        className="flex-1 bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center justify-center"
                     >
                         <Phone size={18} className="mr-2" />
                         Chamar
@@ -206,20 +191,15 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                     {isEditing ? (
                          <button 
                             onClick={handleSaveClick}
-                            className="flex-1 bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-secondary transition-colors flex items-center justify-center shadow-sm disabled:opacity-70"
-                            disabled={isSaving}
+                            className="flex-1 bg-primary text-white py-2 rounded-lg font-medium hover:bg-secondary transition-colors flex items-center justify-center"
                         >
-                            {isSaving ? (
-                                <Loader2 size={18} className="mr-2 animate-spin" />
-                            ) : (
-                                <Save size={18} className="mr-2" />
-                            )}
+                            <Save size={18} className="mr-2" />
                             Salvar
                         </button>
                     ) : (
                          <button 
                             onClick={() => setIsEditing(true)}
-                            className="flex-1 bg-white text-text-primary border border-border py-2.5 rounded-lg font-medium hover:bg-light transition-colors flex items-center justify-center shadow-sm"
+                            className="flex-1 bg-light text-text-primary border border-border py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center"
                         >
                             <Edit2 size={18} className="mr-2" />
                             Editar
@@ -229,6 +209,7 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
             </div>
         </div>
 
+        {/* Footer with Delete Action */}
         <div className="p-4 border-t border-border bg-gray-50 flex justify-between items-center rounded-b-xl">
              <button 
                 onClick={handleDeleteClick}
@@ -237,7 +218,6 @@ const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDele
                     ? 'bg-red-600 text-white hover:bg-red-700 w-full justify-center shadow-md' 
                     : 'text-red-500 hover:bg-red-50 hover:text-red-600'
                 }`}
-                disabled={isEditing}
             >
                 {isDeleting ? (
                     <>

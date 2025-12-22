@@ -1,37 +1,27 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Lead, LeadStatus } from '../types';
 import { FUNNEL_STAGES } from '../constants';
 import KanbanColumn from './KanbanColumn';
-import { Plus, MessageSquare, Download, Search, X, Loader2 } from 'lucide-react';
+import { Plus, MessageSquare, Download, Search, X } from 'lucide-react';
 import LeadDetailModal from './LeadDetailModal';
 
 interface SalesFunnelProps {
   leads: Lead[];
   onLeadDrop: (leadId: number, newStatus: LeadStatus) => void;
-  addLead: (lead: Omit<Lead, 'id' | 'status'>) => Promise<void> | void;
+  addLead: (lead: Omit<Lead, 'id' | 'status'>) => void;
   onDeleteLead: (leadId: number) => void;
-  onUpdateLead: (lead: Lead) => Promise<void> | void;
+  onUpdateLead: (lead: Lead) => void;
 }
 
 const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, onDeleteLead, onUpdateLead }) => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // State for Add Lead Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadWhatsapp, setNewLeadWhatsapp] = useState('');
   const [newLeadOrigin, setNewLeadOrigin] = useState('Manual');
-
-  useEffect(() => {
-    if (selectedLead) {
-        const updatedLead = leads.find(l => l.id === selectedLead.id);
-        if (updatedLead && updatedLead !== selectedLead) {
-            setSelectedLead(updatedLead);
-        }
-    }
-  }, [leads, selectedLead]);
 
   const handleLeadClick = (lead: Lead) => {
     setSelectedLead(lead);
@@ -49,30 +39,20 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
   };
 
   const handleCloseAddModal = () => {
-      if (!isSubmitting) {
-        setIsAddModalOpen(false);
-      }
+      setIsAddModalOpen(false);
   };
 
-  const handleSubmitNewLead = async (e: React.FormEvent) => {
+  const handleSubmitNewLead = (e: React.FormEvent) => {
       e.preventDefault();
       if (newLeadName.trim()) {
-          setIsSubmitting(true);
-          try {
-            await addLead({
-                name: newLeadName.trim(),
-                whatsapp: newLeadWhatsapp.trim(),
-                origin: newLeadOrigin,
-                value: 0,
-                lastContact: "Agora"
-            });
-            handleCloseAddModal();
-          } catch (error) {
-            console.error("Erro ao adicionar lead", error);
-            alert("Erro ao salvar lead. Tente novamente.");
-          } finally {
-            setIsSubmitting(false);
-          }
+          addLead({
+              name: newLeadName.trim(),
+              whatsapp: newLeadWhatsapp.trim(),
+              origin: newLeadOrigin,
+              value: 0,
+              lastContact: "Agora"
+          });
+          handleCloseAddModal();
       }
   };
 
@@ -82,14 +62,15 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
   );
 
   return (
-    <div className="h-full flex flex-col relative">
+    <div className="h-full flex flex-col">
        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
                 <h1 className="text-3xl font-bold text-text-primary">Quadro CRM</h1>
                 <p className="text-text-secondary text-sm">Gerencie seus leads e oportunidades.</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto z-10">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                {/* Search Input with Clear Button */}
                 <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors" size={18} />
                     <input 
@@ -110,10 +91,10 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                 </div>
 
                 <div className="flex space-x-2">
+                    {/* Quick Action Button */}
                     <button 
-                        type="button"
                         onClick={handleOpenAddModal}
-                        className="relative z-20 flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium cursor-pointer"
+                        className="flex items-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-secondary transition-all hover:scale-105 active:scale-95 font-medium"
                     >
                         <Plus size={18} className="mr-2"/>
                         Novo Lead
@@ -130,7 +111,7 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
         </div>
 
       <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
-        {FUNNEL_STAGES.map((status: LeadStatus) => (
+        {FUNNEL_STAGES.map(status => (
           <KanbanColumn 
             key={status}
             title={status} 
@@ -141,25 +122,21 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
         ))}
       </div>
 
-       {selectedLead && (
-           <LeadDetailModal 
-                lead={selectedLead} 
-                onClose={handleCloseModal} 
-                onDelete={onDeleteLead}
-                onUpdate={onUpdateLead}
-           />
-       )}
+       {/* Detail Modal */}
+       <LeadDetailModal 
+            lead={selectedLead} 
+            onClose={handleCloseModal} 
+            onDelete={onDeleteLead}
+            onUpdate={onUpdateLead}
+       />
 
+       {/* Add Lead Modal Overlay */}
        {isAddModalOpen && (
-           <div 
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4" 
-                style={{ zIndex: 9999 }}
-                onClick={handleCloseAddModal}
-            >
-               <div className="bg-card rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all scale-100 relative" onClick={e => e.stopPropagation()}>
-                   <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={handleCloseAddModal}>
+               <div className="bg-card rounded-lg shadow-xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+                   <div className="flex justify-between items-center mb-4">
                        <h2 className="text-xl font-bold text-text-primary">Cadastrar Novo Lead</h2>
-                       <button onClick={handleCloseAddModal} className="text-text-secondary hover:text-text-primary hover:bg-light p-1 rounded-full transition-colors" disabled={isSubmitting}>
+                       <button onClick={handleCloseAddModal} className="text-text-secondary hover:text-text-primary">
                            <X size={24} />
                        </button>
                    </div>
@@ -171,10 +148,8 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                                required
                                value={newLeadName}
                                onChange={e => setNewLeadName(e.target.value)}
-                               className="w-full bg-light border border-border rounded-lg p-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                               className="w-full bg-light border border-border rounded-lg p-2 focus:ring-primary focus:border-primary"
                                placeholder="Ex: Maria Silva"
-                               disabled={isSubmitting}
-                               autoFocus
                            />
                        </div>
                        <div>
@@ -183,9 +158,8 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                                type="tel" 
                                value={newLeadWhatsapp}
                                onChange={e => setNewLeadWhatsapp(e.target.value)}
-                               className="w-full bg-light border border-border rounded-lg p-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                               className="w-full bg-light border border-border rounded-lg p-2 focus:ring-primary focus:border-primary"
                                placeholder="Ex: 11999998888"
-                               disabled={isSubmitting}
                            />
                        </div>
                        <div>
@@ -193,8 +167,7 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                            <select 
                                 value={newLeadOrigin}
                                 onChange={e => setNewLeadOrigin(e.target.value)}
-                                className="w-full bg-light border border-border rounded-lg p-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                disabled={isSubmitting}
+                                className="w-full bg-light border border-border rounded-lg p-2 focus:ring-primary focus:border-primary"
                            >
                                <option value="Manual">Manual</option>
                                <option value="Instagram">Instagram</option>
@@ -203,29 +176,9 @@ const SalesFunnel: React.FC<SalesFunnelProps> = ({ leads, onLeadDrop, addLead, o
                                <option value="Indicação">Indicação</option>
                            </select>
                        </div>
-                       <div className="flex justify-end space-x-3 pt-6">
-                           <button 
-                                type="button" 
-                                onClick={handleCloseAddModal} 
-                                className="px-4 py-2 border border-border rounded-lg text-text-secondary hover:bg-light font-medium transition-colors"
-                                disabled={isSubmitting}
-                            >
-                                Cancelar
-                           </button>
-                           <button 
-                                type="submit" 
-                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary font-medium shadow-md hover:shadow-lg transition-all flex items-center disabled:opacity-70 disabled:cursor-not-allowed"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 size={18} className="animate-spin mr-2" />
-                                        Salvando...
-                                    </>
-                                ) : (
-                                    'Salvar Lead'
-                                )}
-                           </button>
+                       <div className="flex justify-end space-x-2 pt-4">
+                           <button type="button" onClick={handleCloseAddModal} className="px-4 py-2 border border-border rounded-lg text-text-secondary hover:bg-light">Cancelar</button>
+                           <button type="submit" className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary">Salvar Lead</button>
                        </div>
                    </form>
                </div>

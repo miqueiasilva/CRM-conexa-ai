@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -29,7 +28,6 @@ import {
   getAppointments, 
   createAppointment 
 } from './services/crmService';
-import { supabase } from './services/supabaseClient';
 
 const initialAgent: AgentData = {
     type: 'IA de SDR',
@@ -62,13 +60,12 @@ const initialAgent: AgentData = {
     ]
 };
 
+
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activePage, setActivePage] = useState('Início');
   
-  const [activePage, setActivePage] = useState(() => {
-    return localStorage.getItem('conexa_active_page') || 'Início';
-  });
-  
+  // Data states
   const [leads, setLeads] = useState<Lead[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -76,26 +73,7 @@ const App: React.FC = () => {
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
   const [isEditingAgent, setIsEditingAgent] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-        localStorage.setItem('conexa_active_page', activePage);
-    }
-  }, [activePage, isAuthenticated]);
-
+  // Fetch initial data from Supabase
   useEffect(() => {
     if (isAuthenticated) {
       loadData();
@@ -122,10 +100,8 @@ const App: React.FC = () => {
     }
   }, [activePage]);
 
-  const handleLogin = () => {
-  };
-
   const handleAddLead = async (leadData: Omit<Lead, 'id' | 'status'>) => {
+    // 1. Create in DB
     const newLead = await createLead({
       ...leadData,
       status: LeadStatus.CAPTURADOS,
@@ -133,13 +109,17 @@ const App: React.FC = () => {
       lastContact: 'Agora'
     });
 
+    // 2. Update UI
     if (newLead) {
       setLeads(prevLeads => [newLead, ...prevLeads]);
     }
   };
 
   const handleUpdateLead = async (updatedLead: Lead) => {
+    // 1. Update in DB
     const success = await updateLead(updatedLead);
+    
+    // 2. Update UI
     if (success) {
       setLeads(prevLeads => prevLeads.map(lead => 
         lead.id === updatedLead.id ? updatedLead : lead
@@ -148,7 +128,10 @@ const App: React.FC = () => {
   };
 
   const handleDeleteLead = async (leadId: number) => {
+    // 1. Delete from DB
     const success = await deleteLeadFromDB(leadId);
+    
+    // 2. Update UI
     if (success) {
       setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
     }
@@ -162,12 +145,15 @@ const App: React.FC = () => {
   };
 
   const handleLeadDrop = async (leadId: number, newStatus: LeadStatus) => {
+    // Optimistic Update (Update UI immediately)
     setLeads(prevLeads => prevLeads.map(lead =>
       lead.id === leadId ? { ...lead, status: newStatus } : lead
     ));
 
+    // Update DB
     const success = await updateLeadStatus(leadId, newStatus);
     if (!success) {
+      // Revert if failed (optional, simplified here)
       console.error("Falha ao atualizar status no banco");
     }
   };
@@ -182,24 +168,15 @@ const App: React.FC = () => {
     setIsEditingAgent(false);
   };
   
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem('conexa_active_page');
-    setActivePage('Início');
+  const handleLogout = () => {
+    setIsAuthenticated(false);
   };
 
-  if (isAuthenticated === null) {
-      return (
-        <div className="flex h-screen items-center justify-center bg-background">
-            <Loader2 size={48} className="animate-spin text-primary" />
-        </div>
-      );
-  }
-
   if (!isAuthenticated) {
-    return <LoginPage onLogin={handleLogin} />;
+    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
   }
 
+  // Loading Screen while fetching initial data
   if (isLoadingData && activePage === 'DashboardCRM') {
     return (
        <div className="flex h-screen items-center justify-center bg-background">
@@ -269,10 +246,10 @@ const Dashboard: React.FC<DashboardProps> = ({ leads, appointments }) => {
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
     const activeAppointments = appointments.length;
 
-    const funnelCounts = FUNNEL_STAGES.reduce((acc: Record<string, number>, stage: LeadStatus) => {
+    const funnelCounts = FUNNEL_STAGES.reduce((acc, stage) => {
         acc[stage] = leads.filter(lead => lead.status === stage).length;
         return acc;
-    }, {} as Record<string, number>);
+    }, {} as Record<LeadStatus, number>);
 
     return (
         <div>

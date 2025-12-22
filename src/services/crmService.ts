@@ -1,6 +1,7 @@
-
 import { supabase } from './supabaseClient';
 import { Lead, Appointment, LeadStatus } from '../types';
+
+// --- LEADS ---
 
 export async function getLeads(): Promise<Lead[]> {
   const { data, error } = await supabase
@@ -13,6 +14,7 @@ export async function getLeads(): Promise<Lead[]> {
     return [];
   }
 
+  // Mapear snake_case do banco para camelCase do TypeScript se necessário
   return data.map((lead: any) => ({
     id: lead.id,
     name: lead.name,
@@ -98,6 +100,8 @@ export async function deleteLeadFromDB(id: number): Promise<boolean> {
   }
   return true;
 }
+
+// --- APPOINTMENTS ---
 
 export async function getAppointments(): Promise<Appointment[]> {
   const { data, error } = await supabase

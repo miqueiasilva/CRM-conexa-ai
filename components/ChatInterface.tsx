@@ -94,14 +94,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
 
     const processResponse = (response: GenerateContentResponse) => {
         if (response.functionCalls && response.functionCalls.length > 0) {
-            const call = response.functionCalls[0];
-            if (call.name) {
-                const functionCall: FunctionCall = {
-                    name: call.name,
-                    args: call.args || {}
-                };
-                handleFunctionCall(functionCall);
-            }
+            handleFunctionCall(response.functionCalls[0]);
         } else {
             const text = response.text;
             if (text) {

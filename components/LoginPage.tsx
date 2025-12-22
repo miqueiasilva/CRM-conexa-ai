@@ -1,10 +1,16 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Zap, Eye, EyeOff, Loader2, Mail, Lock, Chrome, ChevronRight } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: () => void;
 }
+
+const slogans = [
+  "Centralize 100% do seu atendimento no WhatsApp.",
+  "Qualifique leads e agende serviços no automático.",
+  "IA treinada para converter conversas em vendas.",
+  "Transforme seu WhatsApp em uma máquina de lucro."
+];
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5 mr-3" viewBox="0 0 48 48">
@@ -15,217 +21,226 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const slogans = [
-  "Centralize 100% do seu atendimento no WhatsApp.",
-  "Qualifique leads e agende serviços no automático.",
-  "Junte-se a mais de 500 empresas que já convertem mais.",
-  "Transforme conversas em clientes com nossa IA."
-];
-
-
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [sloganIndex, setSloganIndex] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Rotating Slogans Effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setSloganIndex(prevIndex => (prevIndex + 1) % slogans.length);
-    }, 5000); // Change slogan every 5 seconds
+      setSloganIndex(prev => (prev + 1) % slogans.length);
+    }, 4500);
     return () => clearInterval(interval);
   }, []);
 
-  // Canvas Animation Effect
+  // RESTAURAÇÃO DO FUNDO ANIMADO (CANVAS PARTICLES)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
-    
-    const resizeCanvas = () => {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    let particles: { x: number, y: number, size: number, speedX: number, speedY: number }[] = [];
+    let particles: any[] = [];
     const particleCount = 70;
-    for (let i = 0; i < particleCount; i++) {
+
+    const init = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
         particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2 + 1,
-            speedX: Math.random() * 0.4 - 0.2,
-            speedY: Math.random() * 0.4 - 0.2,
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 2 + 1
         });
-    }
+      }
+    };
 
     const animate = () => {
-        if (!ctx) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
 
-        for (const p of particles) {
-            p.x += p.speedX;
-            p.y += p.speedY;
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
 
-            if (p.x > canvas.width || p.x < 0) p.speedX *= -1;
-            if (p.y > canvas.height || p.y < 0) p.speedY *= -1;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fill();
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
         }
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 120) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-        
-        animationFrameId = requestAnimationFrame(animate);
+      });
+      requestAnimationFrame(animate);
     };
 
+    init();
     animate();
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      cancelAnimationFrame(animationFrameId);
-    };
+    window.addEventListener('resize', init);
+    return () => window.removeEventListener('resize', init);
   }, []);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLoading) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
       onLogin();
-    }, 1500); // Simulate login delay
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Cover Section */}
-      <div className="hidden md:flex w-1/2 bg-primary text-white flex-col items-center justify-center p-12 text-center relative overflow-hidden">
-        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
-        <div className="relative z-10">
-            <Zap size={80} className="mb-6 mx-auto" />
-            <h1 className="text-5xl font-bold">Conexa.AI</h1>
-            <p className="mt-4 text-lg opacity-80">
-              Inteligência Artificial para conversas que convertem.
-            </p>
-            <div className="h-8 mt-4">
-              <p key={sloganIndex} className="text-md opacity-70 animate-[fadeIn_1s_ease-in-out]">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white">
+      {/* Lado Esquerdo - Branding & Animação */}
+      <div className="hidden md:flex md:w-1/2 bg-blue-600 relative items-center justify-center p-16 overflow-hidden">
+        {/* Camada de Gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-90" />
+        
+        {/* Canvas de Partículas */}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+        
+        {/* Conteúdo flutuante */}
+        <div className="relative z-10 text-white text-center max-w-lg space-y-8">
+          <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] glass border border-white/20 shadow-2xl animate-pulse-soft">
+            <Zap size={72} className="text-white fill-white" />
+          </div>
+          
+          <div className="space-y-4">
+            <h1 className="text-7xl font-extrabold tracking-tighter">Conexa.AI</h1>
+            <div className="h-20 flex items-center justify-center">
+              <p key={sloganIndex} className="text-2xl font-medium text-blue-50 leading-relaxed animate-fade-in-up">
                 {slogans[sloganIndex]}
               </p>
             </div>
+          </div>
+
+          <div className="pt-12 grid grid-cols-2 gap-8 border-t border-white/10">
+            <div className="text-left">
+              <span className="block text-3xl font-bold">10k+</span>
+              <span className="text-blue-200 text-sm">Empresas Conectadas</span>
+            </div>
+            <div className="text-left">
+              <span className="block text-3xl font-bold">99.9%</span>
+              <span className="text-blue-200 text-sm">Uptime Garantido</span>
+            </div>
+          </div>
         </div>
-        <style>{`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 0.7; transform: translateY(0); }
-          }
-        `}</style>
       </div>
 
-      {/* Form Section */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-card p-8 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold text-text-primary mb-2">Bem-vindo de volta!</h2>
-          <p className="text-text-secondary mb-8">Faça login para acessar seu painel.</p>
-
-          <form onSubmit={handleFormSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1">
-                E-mail
-              </label>
-              <input
-                type="email"
-                id="email"
-                defaultValue="contato@conexa.ai"
-                className="w-full bg-light border border-border rounded-lg p-3 focus:ring-primary focus:border-primary"
-              />
+      {/* Lado Direito - Login Form */}
+      <div className="flex-1 flex items-center justify-center p-6 md:p-20 bg-slate-50">
+        <div className="w-full max-w-md animate-fade-in-up">
+          {/* Logo Mobile */}
+          <div className="md:hidden flex flex-col items-center mb-12">
+            <div className="p-3 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
+              <Zap size={40} className="text-white fill-white" />
             </div>
-            <div className="relative">
-              <label htmlFor="password"className="block text-sm font-medium text-text-primary mb-1">
-                Senha
-              </label>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                defaultValue="123456"
-                className="w-full bg-light border border-border rounded-lg p-3 focus:ring-primary focus:border-primary"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-text-secondary hover:text-text-primary"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            
-            <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-primary focus:ring-primary border-border rounded" />
-                    <label htmlFor="remember-me" className="ml-2 block text-text-secondary">
-                        Lembrar-me
-                    </label>
-                </div>
-                <a href="#" className="font-medium text-primary hover:text-secondary">
-                    Esqueceu a senha?
-                </a>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-secondary transition-colors flex items-center justify-center disabled:bg-primary/70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? <Loader2 className="animate-spin" size={24} /> : 'Entrar'}
-            </button>
-          </form>
-
-          <div className="my-6 flex items-center">
-              <div className="flex-grow bg-border h-px"></div>
-              <span className="flex-shrink text-sm text-text-secondary px-4">Ou entre com</span>
-              <div className="flex-grow bg-border h-px"></div>
+            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Conexa.AI</h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative">
+            <div className="mb-10">
+              <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Login</h2>
+              <p className="text-slate-500 font-medium">Acesse seu ecossistema inteligente.</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 ml-1">E-mail Corporativo</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <input 
+                    type="email" 
+                    required 
+                    className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    placeholder="voce@empresa.com"
+                    defaultValue="atendimento@conexa.ai"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-sm font-bold text-slate-700">Senha de Acesso</label>
+                  <a href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700">Esqueceu?</a>
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    required 
+                    className="w-full h-14 pl-14 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    placeholder="••••••••"
+                    defaultValue="123456"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 py-2">
+                <input type="checkbox" id="remember" className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-100 cursor-pointer" />
+                <label htmlFor="remember" className="text-sm font-bold text-slate-600 cursor-pointer">Manter conectado</label>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-200 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-70 group"
+              >
+                {isLoading ? (
+                  <Loader2 className="animate-spin" size={28} />
+                ) : (
+                  <>
+                    Entrar na Plataforma
+                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="relative my-10 text-center">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+              <span className="relative px-6 bg-white text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em]">ou acesse com</span>
+            </div>
+
             <button
-                onClick={onLogin}
-                className="w-full flex items-center justify-center bg-white border border-border text-text-primary font-medium py-3 px-4 rounded-lg hover:bg-light transition-colors"
+              type="button"
+              className="w-full h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98]"
             >
-                <GoogleIcon />
-                Entrar com Google
+              <GoogleIcon />
+              Google Workspace
             </button>
+
+            <p className="text-center mt-12 text-slate-500 font-bold">
+              Novo no ecossistema? <a href="#" className="text-blue-600 hover:underline underline-offset-4">Criar Conta Business</a>
+            </p>
           </div>
           
-          <p className="mt-8 text-center text-sm text-text-secondary">
-            Não tem uma conta?{' '}
-            <a href="#" className="font-medium text-primary hover:text-secondary">
-              Cadastre-se
-            </a>
+          <p className="mt-8 text-center text-slate-400 text-xs font-medium">
+            Protegido por Nexttrack™ Cybersecurity. Ao entrar você aceita nossos termos.
           </p>
         </div>
       </div>
@@ -234,4 +249,3 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 };
 
 export default LoginPage;
-    

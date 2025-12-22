@@ -5,9 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true,
-    port: 3000,
-    strictPort: true, // Garante que se a porta 3000 estiver ocupada, o servidor avisa em vez de mudar
+    host: true, // Necessário para alguns ambientes de nuvem/container
+    port: 5173,
   },
   build: {
     outDir: 'dist',
