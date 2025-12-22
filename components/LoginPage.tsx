@@ -11,7 +11,7 @@ const slogans = [
   "A inteligência que escala seu atendimento.",
   "Qualificação de leads via WhatsApp em segundos.",
   "SDR Autônomo focado em conversão real.",
-  "Conexa.AI: O futuro do CRM conversacional."
+  "Convexa.AI: O futuro do CRM conversacional."
 ];
 
 const GoogleIcon = () => (
@@ -47,21 +47,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      {/* Lado Esquerdo - Branding Imersivo */}
       <div className="hidden md:flex md:w-1/2 bg-blue-600 relative items-center justify-center p-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-95" />
-        
-        {/* Elementos Decorativos de IA */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute top-10 left-10 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-700" />
-        </div>
-
         <div className="relative z-10 text-white text-center max-w-lg space-y-10">
           <div className="inline-flex p-6 bg-white/10 rounded-[3rem] backdrop-blur-xl border border-white/20 shadow-2xl">
             <Zap size={80} className="text-white fill-white animate-pulse" />
           </div>
-          
           <div className="space-y-4">
             <h1 className="text-8xl font-black tracking-tighter drop-shadow-lg">{APP_NAME}</h1>
             <div className="h-24 flex items-center justify-center">
@@ -70,7 +61,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </p>
             </div>
           </div>
-
           <div className="pt-16 grid grid-cols-2 gap-12 border-t border-white/10">
             <div className="text-left">
               <span className="block text-4xl font-black">20k+</span>
@@ -84,7 +74,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </div>
       </div>
 
-      {/* Lado Direito - Formulário Clean */}
       <div className="flex-1 flex items-center justify-center p-6 md:p-24 bg-slate-50">
         <div className="w-full max-w-md animate-fade-in-up">
           <div className="md:hidden flex flex-col items-center mb-12">
@@ -109,8 +98,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     type="email" 
                     required 
                     className="w-full h-16 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300"
-                    placeholder="exemplo@conexa.ai"
-                    defaultValue="admin@conexa.ai"
+                    placeholder="exemplo@convexa.ai"
+                    defaultValue="admin@convexa.ai"
                   />
                 </div>
               </div>
@@ -169,7 +158,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             </button>
           </div>
           <p className="mt-10 text-center text-slate-300 text-[10px] font-black uppercase tracking-[0.3em]">
-            Conexa AI Ecosystem © 2024
+            Convexa AI Ecosystem © 2024
           </p>
         </div>
       </div>

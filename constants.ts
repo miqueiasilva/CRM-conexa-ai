@@ -1,7 +1,7 @@
 
 import { LeadStatus, Lead, Appointment, ChatMessage, Stat } from './types';
 
-export const APP_NAME = "Conexa.AI";
+export const APP_NAME = "Convexa.AI";
 
 export const FUNNEL_STAGES: LeadStatus[] = [
   LeadStatus.CAPTURADOS,
