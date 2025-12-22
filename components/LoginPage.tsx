@@ -1,15 +1,17 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, Eye, EyeOff, Loader2, Mail, Lock, Chrome, ChevronRight } from 'lucide-react';
+import { Zap, Eye, EyeOff, Loader2, Mail, Lock, ChevronRight } from 'lucide-react';
+import { APP_NAME } from '../constants';
 
 interface LoginPageProps {
   onLogin: () => void;
 }
 
 const slogans = [
-  "Conectividade total para seu atendimento WhatsApp.",
-  "Qualifique leads e agende serviços no automático.",
-  "IA treinada para converter conversas em vendas.",
-  "Sua empresa em uma nova era de conversão."
+  "Inteligência artificial para escalar seu atendimento.",
+  "Qualificação de leads em tempo real via WhatsApp.",
+  "SDR autônomo focado em conversão e agendamento.",
+  "Conexa.AI: O futuro do CRM conversacional está aqui."
 ];
 
 const GoogleIcon = () => (
@@ -110,11 +112,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-90" />
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
         <div className="relative z-10 text-white text-center max-w-lg space-y-8">
-          <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] glass border border-white/20 shadow-2xl animate-pulse-soft">
+          <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] backdrop-blur-md border border-white/20 shadow-2xl animate-pulse-soft">
             <Zap size={72} className="text-white fill-white" />
           </div>
           <div className="space-y-4">
-            <h1 className="text-7xl font-extrabold tracking-tighter">Convexa.AI</h1>
+            <h1 className="text-7xl font-extrabold tracking-tighter">{APP_NAME}</h1>
             <div className="h-20 flex items-center justify-center">
               <p key={sloganIndex} className="text-2xl font-medium text-blue-50 leading-relaxed animate-fade-in-up">
                 {slogans[sloganIndex]}
@@ -123,12 +125,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
           <div className="pt-12 grid grid-cols-2 gap-8 border-t border-white/10">
             <div className="text-left">
-              <span className="block text-3xl font-bold">10k+</span>
+              <span className="block text-3xl font-bold">15k+</span>
               <span className="text-blue-200 text-sm">Empresas Conectadas</span>
             </div>
             <div className="text-left">
-              <span className="block text-3xl font-bold">99.9%</span>
-              <span className="text-blue-200 text-sm">Uptime Garantido</span>
+              <span className="block text-3xl font-bold">99.99%</span>
+              <span className="text-blue-200 text-sm">Uptime Conexa</span>
             </div>
           </div>
         </div>
@@ -140,34 +142,34 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div className="p-3 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
               <Zap size={40} className="text-white fill-white" />
             </div>
-            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Convexa.AI</h2>
+            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{APP_NAME}</h2>
           </div>
 
           <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative">
             <div className="mb-10">
-              <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Login</h2>
-              <p className="text-slate-500 font-medium">Acesse seu ecossistema de conversão.</p>
+              <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Bem-vindo</h2>
+              <p className="text-slate-500 font-medium">Faça login para gerenciar seus agentes.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">E-mail Corporativo</label>
+                <label className="text-sm font-bold text-slate-700 ml-1">E-mail corporativo</label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
                   <input 
                     type="email" 
                     required 
                     className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
-                    placeholder="voce@empresa.com"
-                    defaultValue="atendimento@convexa.ai"
+                    placeholder="exemplo@conexa.ai"
+                    defaultValue="admin@conexa.ai"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center ml-1">
-                  <label className="text-sm font-bold text-slate-700">Senha de Acesso</label>
-                  <a href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700">Esqueceu?</a>
+                  <label className="text-sm font-bold text-slate-700">Senha de acesso</label>
+                  <a href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700">Recuperar</a>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
@@ -188,11 +190,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 py-2">
-                <input type="checkbox" id="remember" className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-100 cursor-pointer" />
-                <label htmlFor="remember" className="text-sm font-bold text-slate-600 cursor-pointer">Manter conectado</label>
-              </div>
-
               <button
                 type="submit"
                 disabled={isLoading}
@@ -202,7 +199,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   <Loader2 className="animate-spin" size={28} />
                 ) : (
                   <>
-                    Entrar na Plataforma
+                    Acessar Dashboard
                     <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -211,7 +208,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
             <div className="relative my-10 text-center">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <span className="relative px-6 bg-white text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em]">ou acesse com</span>
+              <span className="relative px-6 bg-white text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em]">ou continuar com</span>
             </div>
 
             <button
@@ -219,15 +216,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               className="w-full h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98]"
             >
               <GoogleIcon />
-              Google Workspace
+              Google Business
             </button>
-
-            <p className="text-center mt-12 text-slate-500 font-bold">
-              Novo no ecossistema? <a href="#" className="text-blue-600 hover:underline underline-offset-4">Criar Conta Business</a>
-            </p>
           </div>
-          <p className="mt-8 text-center text-slate-400 text-xs font-medium">
-            Protegido por Nexttrack™ Cybersecurity.
+          <p className="mt-8 text-center text-slate-400 text-xs font-medium uppercase tracking-widest">
+            Powered by Conexa AI Global Support
           </p>
         </div>
       </div>

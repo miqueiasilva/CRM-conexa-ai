@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, Target, Zap, FileText, MessageCircle } from 'lucide-react';
+import { APP_NAME } from '../constants';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -42,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         <div className="p-2 bg-blue-600 rounded-lg shadow-md">
           <Zap className="text-white fill-white" size={24}/>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tighter">Convexa.AI</h1>
+        <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
       </div>
 
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
 
         <div className="pt-4">
           <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            Nextrack CRM
+            CRM Dashboard
             {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {crmOpen && (
@@ -66,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
         
         <div className="pt-4">
           <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            NextIA
+            SDR Inteligente
             {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
           {conexaAIOpen && (
