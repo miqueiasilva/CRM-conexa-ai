@@ -1,32 +1,8 @@
-
 import { GoogleGenAI, FunctionDeclaration, Type, Chat } from "@google/genai";
 
-let ai: GoogleGenAI | null = null;
 let chat: Chat | null = null;
 
-const getApiKey = (): string | undefined => {
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
-        // @ts-ignore
-        return import.meta.env.VITE_API_KEY;
-    }
-    if (typeof process !== 'undefined' && process.env?.API_KEY) {
-        return process.env.API_KEY;
-    }
-    return undefined;
-};
-
-const getAi = () => {
-    if (!ai) {
-        const apiKey = getApiKey();
-        if (!apiKey) {
-            throw new Error("API_KEY environment variable not set");
-        }
-        ai = new GoogleGenAI({ apiKey });
-    }
-    return ai;
-};
-
+/* Defined function declarations for the SDR agent */
 const functionDeclarations: FunctionDeclaration[] = [
     {
         name: 'criar_lead',
@@ -74,9 +50,10 @@ const functionDeclarations: FunctionDeclaration[] = [
     },
 ];
 
+/* Always use process.env.API_KEY and fresh GoogleGenAI instance before call */
 export async function startChat() {
-    const genAI = getAi();
-    chat = genAI.chats.create({
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    chat = ai.chats.create({
         model: 'gemini-3-flash-preview',
         config: {
           systemInstruction: `Você é Jaci.AI, assistente virtual integrada à plataforma Convexa.AI. Seu objetivo é ajudar clientes do Studio Jacilene Félix a conhecer serviços, verificar preços e agendar horários.
@@ -88,6 +65,7 @@ export async function startChat() {
     });
 }
 
+/* Ensure chat session persists but initialization follows guidelines */
 export async function runChat(prompt: string) {
     if (!chat) {
         await startChat();
@@ -99,6 +77,7 @@ export async function runChat(prompt: string) {
     return result;
 }
 
+/* Handle tool responses back to the model */
 export async function sendFunctionResponse(functionResponse: { functionResponses: { name: string; response: object }[] }) {
     if (!chat) {
         throw new Error("Chat not initialized");

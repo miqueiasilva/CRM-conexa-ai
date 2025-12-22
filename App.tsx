@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -8,7 +7,8 @@ import AppointmentsList from './components/AppointmentsList';
 import LeadSourceChart from './components/LeadSourceChart';
 import ChatInterface from './components/ChatInterface';
 import { Lead, Appointment, LeadStatus, AgentData } from './types';
-import { BarChart, Users, DollarSign, MessageCircle } from 'lucide-react';
+/* Added Menu to the icons import */
+import { BarChart, Users, DollarSign, MessageCircle, Menu } from 'lucide-react';
 import AgentCreator from './components/AgentCreator';
 import AgentInfoPage from './components/AgentInfoPage';
 import WhatsApp from './components/WhatsApp';
@@ -47,6 +47,7 @@ const initialAgent: AgentData = {
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [savedAgent, setSavedAgent] = useState<AgentData | null>(initialAgent);
@@ -84,8 +85,8 @@ const App: React.FC = () => {
 
     switch (activePage) {
       case 'Início': return <HomePage setPage={(page: string) => setActivePage(page)} />;
-      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} />;
-      case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuOpen={() => setIsSidebarOpen(true)} />;
+      case 'Quadro': return <div className="h-full overflow-hidden"><SalesFunnel leads={leads} onLeadDrop={handleLeadDrop} addLead={handleAddLead} onDeleteLead={handleDeleteLead} onUpdateLead={handleUpdateLead} /></div>;
       case 'Simulador': return <ChatInterface addLead={handleAddLead} addAppointment={(app: Omit<Appointment, 'id'>) => setAppointments(prev => [...prev, { ...app, id: Date.now() }])} />;
       case 'Criação de Agente': return <AgentCreator onSave={(data: AgentData) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
       case 'Info do Agente': return <AgentInfoPage agent={savedAgent} onEdit={() => setIsEditingAgent(true)} />;
@@ -102,16 +103,33 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-background text-text-primary">
-      <Sidebar activePage={activePage} setPage={(page: string) => setActivePage(page)} onLogout={handleLogout} />
-      <main className="flex-1 p-6 overflow-y-auto">
-        {renderContent()}
+    <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden">
+      <Sidebar 
+        activePage={activePage} 
+        setPage={setActivePage} 
+        onLogout={handleLogout} 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+      <main className="flex-1 p-4 md:p-6 overflow-y-auto relative">
+        {/* Botão de Menu Flutuante para páginas que não possuem Header integrado */}
+        {activePage !== 'DashboardCRM' && (
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden absolute top-4 left-4 p-2 bg-white border border-slate-200 rounded-xl text-slate-600 z-30 shadow-sm"
+          >
+            <Menu size={24} />
+          </button>
+        )}
+        <div className={activePage !== 'DashboardCRM' ? 'pt-12 lg:pt-0' : ''}>
+          {renderContent()}
+        </div>
       </main>
     </div>
   );
 };
 
-const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ leads, appointments }) => {
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOpen: () => void }> = ({ leads, appointments, onMenuOpen }) => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
@@ -119,8 +137,8 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
 
     return (
         <div className="animate-fade-in-up">
-            <Header />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <Header onMenuOpen={onMenuOpen} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
                 <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />
                 <StatCard title="Atendimentos" value={answeredLeads} icon="MessageCircle" color="#22C55E" />
                 <StatCard title="Conversão" value={`${conversionRate}%`} icon="BarChart" color="#F59E0B" />
@@ -128,8 +146,8 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
-                    <div className="bg-card p-6 rounded-lg shadow-sm h-full border border-border">
-                       <h2 className="text-xl font-bold mb-6 text-text-primary">Funil de Vendas</h2>
+                    <div className="bg-white p-6 rounded-[2rem] shadow-sm h-full border border-slate-100">
+                       <h2 className="text-xl font-black mb-6 text-slate-900">Funil de Vendas</h2>
                        <div className="space-y-6">
                            {FUNNEL_STAGES.map((stage: LeadStatus, index: number) => {
                                const count = leads.filter(l => l.status === stage).length;
@@ -137,11 +155,11 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
                                return (
                                <div key={stage}>
                                    <div className="flex justify-between items-center mb-2">
-                                       <span className="text-sm font-bold text-text-secondary uppercase tracking-wider">{stage}</span>
-                                       <span className="text-sm font-black text-text-primary">{count}</span>
+                                       <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{stage}</span>
+                                       <span className="text-sm font-black text-slate-900">{count}</span>
                                    </div>
-                                   <div className="w-full bg-slate-100 rounded-full h-3">
-                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index % 3]} h-3 rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
+                                   <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                                       <div className={`${['bg-yellow-400', 'bg-blue-500', 'bg-green-500'][index % 3]} h-full rounded-full transition-all duration-1000`} style={{ width: `${perc}%` }}></div>
                                    </div>
                                </div>
                            )})}
@@ -150,7 +168,9 @@ const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[] }> = ({ l
                 </div>
                 <div className="space-y-6">
                     <AppointmentsList appointments={appointments} />
-                    <LeadSourceChart />
+                    <div className="hidden sm:block">
+                        <LeadSourceChart />
+                    </div>
                 </div>
             </div>
             {showSuggestions && <Suggestions onClose={() => setShowSuggestions(false)} />}

@@ -31,7 +31,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
     const processAIResponse = async (userPrompt: string) => {
         setIsLoading(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+            /* Create new instance right before API call and use process.env.API_KEY exclusively */
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             const response = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: userPrompt,
@@ -46,6 +47,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
                 }
             });
 
+            /* Directly access the .text property from the response object */
             const text = response.text || 'Desculpe, não consegui processar isso agora.';
             setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'ai', text }]);
             
@@ -55,6 +57,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ addLead, addAppointment }
                 console.log("Potential lead detected by keyword simple heuristic");
             }
         } catch (error) {
+            console.error('Gemini API Error:', error);
             setMessages(prev => [...prev, { id: 'error', sender: 'ai', text: 'Tive um problema na conexão. Pode repetir?' }]);
         } finally {
             setIsLoading(false);

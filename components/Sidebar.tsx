@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, Target, Zap, FileText, MessageCircle } from 'lucide-react';
+import React from 'react';
+import { Home, LayoutGrid, MessageSquare, Bot, LogOut, ChevronDown, ChevronUp, Target, Zap, FileText, MessageCircle, X } from 'lucide-react';
 import { APP_NAME } from '../constants';
 
 interface NavItemProps {
@@ -31,64 +31,90 @@ interface SidebarProps {
   activePage: string;
   setPage: (page: string) => void;
   onLogout: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout }) => {
-  const [crmOpen, setCrmOpen] = useState(true);
-  const [conexaAIOpen, setConexaAIOpen] = useState(true);
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen, onClose }) => {
+  const [crmOpen, setCrmOpen] = React.useState(true);
+  const [conexaAIOpen, setConexaAIOpen] = React.useState(true);
+
+  const handlePageSelect = (page: string) => {
+    setPage(page);
+    onClose(); // Fecha a sidebar no mobile ao selecionar
+  };
 
   return (
-    <aside className="w-72 bg-white border-r border-slate-100 flex-shrink-0 flex flex-col shadow-sm">
-      <div className="px-8 py-8 flex items-center gap-3">
-        <div className="p-2 bg-blue-600 rounded-lg shadow-md">
-          <Zap className="text-white fill-white" size={24}/>
-        </div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
-      </div>
+    <>
+      {/* Overlay para Mobile */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          onClick={onClose}
+        />
+      )}
 
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
-        <NavItem icon={<Home size={20} />} label="Início" isActive={activePage === 'Início'} onClick={() => setPage('Início')} />
-        <NavItem icon={<MessageCircle size={20} />} label="WhatsApp" isActive={activePage === 'WhatsApp'} onClick={() => setPage('WhatsApp')} />
-
-        <div className="pt-4">
-          <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            CRM Dashboard
-            {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
-          </button>
-          {crmOpen && (
-            <div className="space-y-1">
-              <NavItem icon={<LayoutGrid size={18} />} label="Dashboard" isActive={activePage === 'DashboardCRM'} onClick={() => setPage('DashboardCRM')} isSubItem />
-              <NavItem icon={<Target size={18} />} label="Quadro" isActive={activePage === 'Quadro'} onClick={() => setPage('Quadro')} isSubItem />
-              <NavItem icon={<FileText size={18} />} label="Disparo" isActive={activePage === 'Disparo'} onClick={() => setPage('Disparo')} isSubItem />
-              <NavItem icon={<MessageSquare size={18} />} label="Mensagem" isActive={activePage === 'Mensagem'} onClick={() => setPage('Mensagem')} isSubItem />
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 flex-shrink-0 flex flex-col shadow-xl lg:shadow-sm
+        transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="px-8 py-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-600 rounded-lg shadow-md">
+              <Zap className="text-white fill-white" size={24}/>
             </div>
-          )}
-        </div>
-        
-        <div className="pt-4">
-          <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            SDR Inteligente
-            {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
+          </div>
+          <button onClick={onClose} className="lg:hidden p-2 text-slate-400 hover:text-slate-900">
+            <X size={24} />
           </button>
-          {conexaAIOpen && (
-            <div className="space-y-1">
-              <NavItem icon={<Zap size={18} />} label="Criação de Agente" isActive={activePage === 'Criação de Agente'} onClick={() => setPage('Criação de Agente')} isSubItem />
-              <NavItem icon={<Bot size={18} />} label="Simulador" isActive={activePage === 'Simulador'} onClick={() => setPage('Simulador')} isSubItem />
-            </div>
-          )}
         </div>
-      </nav>
 
-      <div className="p-4 mt-auto border-t border-slate-50">
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-colors"
-        >
-          <LogOut size={20} className="mr-3" />
-          Sair da Conta
-        </button>
-      </div>
-    </aside>
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+          <NavItem icon={<Home size={20} />} label="Início" isActive={activePage === 'Início'} onClick={() => handlePageSelect('Início')} />
+          <NavItem icon={<MessageCircle size={20} />} label="WhatsApp" isActive={activePage === 'WhatsApp'} onClick={() => handlePageSelect('WhatsApp')} />
+
+          <div className="pt-4">
+            <button onClick={() => setCrmOpen(!crmOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+              CRM Dashboard
+              {crmOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+            </button>
+            {crmOpen && (
+              <div className="space-y-1">
+                <NavItem icon={<LayoutGrid size={18} />} label="Dashboard" isActive={activePage === 'DashboardCRM'} onClick={() => handlePageSelect('DashboardCRM')} isSubItem />
+                <NavItem icon={<Target size={18} />} label="Quadro" isActive={activePage === 'Quadro'} onClick={() => handlePageSelect('Quadro')} isSubItem />
+                <NavItem icon={<FileText size={18} />} label="Disparo" isActive={activePage === 'Disparo'} onClick={() => handlePageSelect('Disparo')} isSubItem />
+                <NavItem icon={<MessageSquare size={18} />} label="Mensagem" isActive={activePage === 'Mensagem'} onClick={() => handlePageSelect('Mensagem')} isSubItem />
+              </div>
+            )}
+          </div>
+          
+          <div className="pt-4">
+            <button onClick={() => setConexaAIOpen(!conexaAIOpen)} className="w-full flex justify-between items-center px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+              SDR Inteligente
+              {conexaAIOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+            </button>
+            {conexaAIOpen && (
+              <div className="space-y-1">
+                <NavItem icon={<Zap size={18} />} label="Criação de Agente" isActive={activePage === 'Criação de Agente'} onClick={() => handlePageSelect('Criação de Agente')} isSubItem />
+                <NavItem icon={<Bot size={18} />} label="Simulador" isActive={activePage === 'Simulador'} onClick={() => handlePageSelect('Simulador')} isSubItem />
+              </div>
+            )}
+          </div>
+        </nav>
+
+        <div className="p-4 mt-auto border-t border-slate-50">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-colors"
+          >
+            <LogOut size={20} className="mr-3" />
+            Sair da Conta
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 

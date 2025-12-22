@@ -43,11 +43,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     if (!ctx) return;
 
     let particles: any[] = [];
-    const particleCount = 70;
+    const particleCount = 40;
 
     const init = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      const container = canvas.parentElement;
+      if (!container) return;
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
       particles = [];
       for (let i = 0; i < particleCount; i++) {
         particles.push({
@@ -79,7 +81,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 120) {
+          if (dist < 100) {
             ctx.beginPath();
             ctx.lineWidth = 0.5;
             ctx.moveTo(p.x, p.y);
@@ -107,23 +109,24 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      <div className="hidden md:flex md:w-1/2 bg-blue-600 relative items-center justify-center p-16 overflow-hidden">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-white overflow-x-hidden">
+      {/* Lado Esquerdo / Topo - Branding */}
+      <div className="w-full lg:w-1/2 bg-blue-600 relative flex items-center justify-center p-8 lg:p-16 min-h-[30vh] lg:min-h-screen overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 opacity-90" />
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
-        <div className="relative z-10 text-white text-center max-w-lg space-y-8">
-          <div className="inline-flex p-5 bg-white/10 rounded-[2.5rem] backdrop-blur-md border border-white/20 shadow-2xl animate-pulse-soft">
-            <Zap size={72} className="text-white fill-white" />
+        <div className="relative z-10 text-white text-center max-w-lg space-y-4 lg:space-y-8">
+          <div className="inline-flex p-3 lg:p-5 bg-white/10 rounded-2xl lg:rounded-[2.5rem] backdrop-blur-md border border-white/20 shadow-2xl animate-pulse-soft">
+            <Zap size={48} className="text-white fill-white lg:w-[72px] lg:h-[72px]" />
           </div>
-          <div className="space-y-4">
-            <h1 className="text-7xl font-extrabold tracking-tighter">{APP_NAME}</h1>
-            <div className="h-20 flex items-center justify-center">
+          <div className="space-y-2 lg:space-y-4">
+            <h1 className="text-4xl lg:text-7xl font-black tracking-tighter">{APP_NAME}</h1>
+            <div className="hidden lg:flex h-20 items-center justify-center">
               <p key={sloganIndex} className="text-2xl font-medium text-blue-50 leading-relaxed animate-fade-in-up">
                 {slogans[sloganIndex]}
               </p>
             </div>
           </div>
-          <div className="pt-12 grid grid-cols-2 gap-8 border-t border-white/10">
+          <div className="hidden lg:grid grid-cols-2 gap-8 pt-12 border-t border-white/10">
             <div className="text-left">
               <span className="block text-3xl font-bold">15k+</span>
               <span className="text-blue-200 text-sm">Empresas Conectadas</span>
@@ -136,47 +139,41 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-6 md:p-20 bg-slate-50">
+      {/* Lado Direito / Baixo - Formulário */}
+      <div className="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-20 bg-slate-50 relative z-10 -mt-10 lg:mt-0">
         <div className="w-full max-w-md animate-fade-in-up">
-          <div className="md:hidden flex flex-col items-center mb-12">
-            <div className="p-3 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-200">
-              <Zap size={40} className="text-white fill-white" />
-            </div>
-            <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{APP_NAME}</h2>
-          </div>
-
-          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative">
-            <div className="mb-10">
-              <h2 className="text-4xl font-extrabold text-slate-900 mb-3">Bem-vindo</h2>
-              <p className="text-slate-500 font-medium">Faça login para gerenciar seus agentes.</p>
+          <div className="bg-white rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-8 lg:p-12 border border-slate-100 relative">
+            <div className="mb-8 lg:mb-10 text-center lg:text-left">
+              <h2 className="text-3xl lg:text-4xl font-black text-slate-900 mb-2">Bem-vindo</h2>
+              <p className="text-slate-500 font-medium text-sm lg:text-base">Faça login para gerenciar seus agentes.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">E-mail corporativo</label>
+            <form onSubmit={handleSubmit} className="space-y-5 lg:space-y-6">
+              <div className="space-y-1.5 lg:space-y-2">
+                <label className="text-xs lg:text-sm font-bold text-slate-700 ml-1">E-mail corporativo</label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />
                   <input 
                     type="email" 
                     required 
-                    className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    className="w-full h-12 lg:h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl lg:rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400 text-sm lg:text-base"
                     placeholder="exemplo@convexa.ai"
                     defaultValue="admin@convexa.ai"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5 lg:space-y-2">
                 <div className="flex justify-between items-center ml-1">
-                  <label className="text-sm font-bold text-slate-700">Senha de acesso</label>
-                  <a href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700">Recuperar</a>
+                  <label className="text-xs lg:text-sm font-bold text-slate-700">Senha de acesso</label>
+                  <a href="#" className="text-[10px] lg:text-xs font-bold text-blue-600 hover:text-blue-700">Recuperar</a>
                 </div>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={22} />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />
                   <input 
                     type={showPassword ? "text" : "password"} 
                     required 
-                    className="w-full h-14 pl-14 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400"
+                    className="w-full h-12 lg:h-14 pl-12 pr-12 bg-slate-50 border border-slate-200 rounded-xl lg:rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-600 focus:bg-white outline-none transition-all font-semibold text-slate-900 placeholder:text-slate-400 text-sm lg:text-base"
                     placeholder="••••••••"
                     defaultValue="123456"
                   />
@@ -185,7 +182,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </div>
@@ -193,10 +190,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-200 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-70 group"
+                className="w-full h-14 lg:h-16 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl lg:rounded-2xl shadow-xl shadow-blue-200 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-70 group text-base lg:text-lg"
               >
                 {isLoading ? (
-                  <Loader2 className="animate-spin" size={28} />
+                  <Loader2 className="animate-spin" size={24} />
                 ) : (
                   <>
                     Acessar Dashboard
@@ -206,21 +203,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </button>
             </form>
 
-            <div className="relative my-10 text-center">
+            <div className="relative my-8 lg:my-10 text-center">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <span className="relative px-6 bg-white text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em]">ou continuar com</span>
+              <span className="relative px-4 lg:px-6 bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest">ou continuar com</span>
             </div>
 
             <button
               type="button"
-              className="w-full h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98]"
+              className="w-full h-12 lg:h-14 border-2 border-slate-100 rounded-xl lg:rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98] text-sm lg:text-base"
             >
               <GoogleIcon />
               Google Business
             </button>
           </div>
-          <p className="mt-8 text-center text-slate-400 text-xs font-medium uppercase tracking-widest">
-            Powered by Convexa AI Global Support
+          <p className="mt-8 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+            Convexa AI Ecosystem © 2024
           </p>
         </div>
       </div>
