@@ -3,22 +3,22 @@ import React from 'react';
 import { Bell, Search, User, Menu } from 'lucide-react';
 
 interface HeaderProps {
-  onMenuOpen?: () => void;
+  onOpen?: () => void;
   title?: string;
   subtitle?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  onMenuOpen,
+  onOpen, 
   title = "Visão Geral", 
   subtitle = "Bem-vindo ao centro de comando Convexa." 
 }) => {
   return (
     <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 animate-fade-in-up">
       <div className="flex items-center gap-4 w-full md:w-auto">
-        {onMenuOpen && (
+        {onOpen && (
           <button 
-            onClick={onMenuOpen}
+            onClick={onOpen}
             className="lg:hidden p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-95 flex items-center justify-center"
             aria-label="Abrir menu"
           >

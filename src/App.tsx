@@ -47,7 +47,7 @@ const initialAgent: AgentData = {
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activePage, setActivePage] = useState('Início');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const [leads, setLeads] = useState<Lead[]>(initialLeadsData);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -60,7 +60,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (activePage) {
       case 'Início': return <HomePage setPage={setActivePage} />;
-      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onMenuOpen={() => setSidebarOpen(true)} />;
+      case 'DashboardCRM': return <Dashboard leads={leads} appointments={appointments} onOpen={() => setIsSidebarOpen(true)} />;
       case 'Quadro': return <SalesFunnel leads={leads} onLeadDrop={(id, s) => setLeads(prev => prev.map(l => l.id === id ? {...l, status: s} : l))} addLead={(l) => setLeads(prev => [{...l, id: Date.now(), status: LeadStatus.CAPTURADOS}, ...prev])} onDeleteLead={(id) => setLeads(prev => prev.filter(l => l.id !== id))} onUpdateLead={(l) => setLeads(prev => prev.map(old => old.id === l.id ? l : old))} />;
       case 'Simulador': return <ChatInterface addLead={() => {}} addAppointment={() => {}} />;
       case 'Criação de Agente': return <AgentCreator onSave={(data) => { setSavedAgent(data); setActivePage('Info do Agente'); }} />;
@@ -81,18 +81,18 @@ const App: React.FC = () => {
         activePage={activePage} 
         setPage={(page) => {
           setActivePage(page);
-          setSidebarOpen(false);
+          setIsSidebarOpen(false);
         }} 
         onLogout={handleLogout} 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
       />
       
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {/* Header persistente para páginas que não têm Header interno */}
+        {/* Header persistente para páginas que não têm Header interno ou gatilho mobile */}
         {activePage !== 'DashboardCRM' && (
           <div className="lg:hidden p-4 bg-white border-b border-slate-200">
-            <Header onMenuOpen={() => setSidebarOpen(true)} title={activePage} subtitle="" />
+            <Header onOpen={() => setIsSidebarOpen(true)} title={activePage} subtitle="" />
           </div>
         )}
 
@@ -104,14 +104,14 @@ const App: React.FC = () => {
   );
 };
 
-const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onMenuOpen: () => void }> = ({ leads, appointments, onMenuOpen }) => {
+const Dashboard: React.FC<{ leads: Lead[], appointments: Appointment[], onOpen: () => void }> = ({ leads, appointments, onOpen }) => {
     const totalLeads = leads.length;
     const answeredLeads = leads.filter(l => l.status !== LeadStatus.CAPTURADOS).length;
     const conversionRate = totalLeads > 0 ? ((leads.filter(l => l.status === LeadStatus.VENDAS_REALIZADAS).length / totalLeads) * 100).toFixed(1) : "0.0";
 
     return (
         <div className="animate-fade-in-up space-y-6">
-            <Header title="Visão Geral" onMenuOpen={onMenuOpen} />
+            <Header title="Visão Geral" onOpen={onOpen} />
             
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                 <StatCard title="Total de Leads" value={totalLeads} icon="Users" color="#3B82F6" />

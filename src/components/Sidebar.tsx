@@ -41,25 +41,22 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
 
   const handlePageSelect = (page: string) => {
     setPage(page);
-    if (window.innerWidth < 1024) {
-      onClose();
-    }
   };
 
   return (
     <>
-      {/* Mobile Backdrop Overlay - Transparente Escuro */}
-      <div 
-        className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={onClose}
-      />
+      {/* Overlay: Fundo preto transparente visível apenas no mobile quando aberto */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Sidebar Drawer Container */}
+      {/* Estrutura: Aside com classes Off-Canvas */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-100 flex flex-col shadow-2xl lg:shadow-none
-        transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-64 transform bg-white border-r border-slate-100 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out
+        lg:static lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="px-6 py-8 flex items-center justify-between">
@@ -70,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setPage, onLogout, isOpen
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter">{APP_NAME}</h1>
           </div>
           
-          {/* Close Button Mobile (Seta para Esquerda) */}
+          {/* BOTÃO DE FECHAR (SETA): Visível apenas no mobile */}
           <button 
             onClick={onClose}
             className="lg:hidden p-2 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all active:scale-95"
