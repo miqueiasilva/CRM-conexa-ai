@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, QrCode, Loader2, RefreshCw, Plus, Info, Check, Copy, 
-  ExternalLink, Shield, Settings, AlertCircle, HelpCircle, Phone, Sparkles 
+  ExternalLink, Shield, Settings, AlertCircle, HelpCircle, Phone, Sparkles,
+  Terminal, Send
 } from 'lucide-react';
 import QRCode from 'qrcode';
 
@@ -74,6 +75,88 @@ const WhatsApp: React.FC = () => {
   // Toast feedback states
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Webhook Logs and Simulations State
+  const [dbLogs, setDbLogs] = useState<any[]>([]);
+  const [simulationInput, setSimulationInput] = useState('Olá! Gostaria de agendar um designer de sobrancelhas.');
+  const [isSimulatingHandshake, setIsSimulatingHandshake] = useState(false);
+  const [isSimulatingMessage, setIsSimulatingMessage] = useState(false);
+
+  // Poll server for webhook log history (every 3 seconds)
+  useEffect(() => {
+    let active = true;
+    const fetchLogs = async () => {
+      try {
+        const res = await fetch("/api/webhook-logs");
+        if (res.ok && active) {
+          const data = await res.json();
+          setDbLogs(data);
+        }
+      } catch (err) {
+        // Soft fail silently
+      }
+    };
+    
+    fetchLogs();
+    const interval = setInterval(fetchLogs, 3000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [activeTab]);
+
+  const simulateHandshake = async () => {
+    setIsSimulatingHandshake(true);
+    try {
+      const testChallenge = "challenge_v_" + Math.floor(Math.random() * 89999 + 10000);
+      const url = `/v1/webhooks/whatsapp/${appSuffix}?hub.mode=subscribe&hub.verify_token=${verifyToken}&hub.challenge=${testChallenge}`;
+      
+      const res = await fetch(url);
+      const output = await res.text();
+      
+      if (res.ok && output === testChallenge) {
+        triggerNotification(`Meta Handshake Sucesso! O webhook respondeu status 200 OK com o desafio verbatim: "${output}"`);
+      } else {
+        alert(`Erro na validação GET. Código HTTP: ${res.status}`);
+      }
+    } catch (e: any) {
+      alert(`Erro ao testar endpoint: ${e.message}`);
+    } finally {
+      setIsSimulatingHandshake(false);
+    }
+  };
+
+  const simulateMessage = async () => {
+    setIsSimulatingMessage(true);
+    try {
+      const res = await fetch("/api/simulate-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "message",
+          accountId: appSuffix,
+          messageBody: simulationInput
+        })
+      });
+      if (res.ok) {
+        triggerNotification(`Simulador: Mensagem enviada para o canal webhook!`);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSimulatingMessage(false);
+    }
+  };
+
+  const clearWebhookLogs = async () => {
+    try {
+      await fetch("/api/webhook-logs/clear", { method: "POST" });
+      setDbLogs([]);
+      triggerNotification("Logs de webhook limpos com sucesso.");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Save QR Code connections
   useEffect(() => {
@@ -542,6 +625,138 @@ const WhatsApp: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </div>
+
+            {/* Terminal de Webhooks e Simulador em Tempo Real */}
+            <div className="bg-slate-950 text-slate-100 p-6 md:p-8 rounded-[2rem] border border-slate-800 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="p-3 bg-slate-900 border border-slate-800 text-blue-400 rounded-2xl relative block">
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <Terminal size={22} />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-black text-white">Meta Webhook Console & Sandbox</h3>
+                    <p className="text-slate-400 text-xs mt-0.5">Monitore handshakes de validação e payloads em tempo real.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={clearWebhookLogs}
+                    className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 hover:text-white text-slate-300 text-xs font-bold rounded-xl border border-slate-800 transition-all"
+                  >
+                    Limpar Painel
+                  </button>
+                </div>
+              </div>
+
+              {/* Simuladores de Ação */}
+              <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800/80 space-y-4">
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                  <span>Ferramentas de Simulação e Validação Geral</span>
+                  <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-black uppercase">
+                    Servidor da API Ativo
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Simular Handshake GET */}
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-200">1. Simular Desafio GET (Handshake)</h4>
+                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                        Chama a validação GET nativa no seu backend Convexa para testar o token de segurança e a resposta do `hub.challenge`.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={simulateHandshake}
+                      disabled={isSimulatingHandshake}
+                      className="w-full bg-blue-600 hover:bg-blue-750 text-white text-[11px] font-black uppercase tracking-wider py-2.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    >
+                      {isSimulatingHandshake ? <Loader2 size={12} className="animate-spin" /> : <Settings size={12} />}
+                      Testar Desafio Handshake GET
+                    </button>
+                  </div>
+
+                  {/* Simular Mensagem POST */}
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-200">2. Simular Envio de Mensagem (POST)</h4>
+                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                        Simula o envio de uma mensagem de WhatsApp por parte de um cliente qualquer, transmitindo o payload JSON de dados ao webhook.
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <input 
+                        type="text"
+                        value={simulationInput}
+                        onChange={(e) => setSimulationInput(e.target.value)}
+                        placeholder="Mensagem do cliente..."
+                        className="flex-1 bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-600 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-slate-700 font-sans"
+                      />
+                      <button
+                        type="button"
+                        onClick={simulateMessage}
+                        disabled={isSimulatingMessage}
+                        className="bg-emerald-600 hover:bg-emerald-700 hover:text-white text-white text-[11px] font-black uppercase tracking-wider px-3 rounded-lg transition-all flex items-center justify-center disabled:opacity-50 shrink-0"
+                        title="Enviar"
+                      >
+                        {isSimulatingMessage ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Monitor Visual (Console Terminal) */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden font-mono text-[11px] flex flex-col h-64 shadow-inner">
+                {/* Janela do Terminal */}
+                <div className="bg-slate-900/60 px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-slate-500 select-none">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block"></span>
+                    <span className="text-[10px] font-bold text-slate-400 ml-2">stdout — webhook_monitor.log</span>
+                  </div>
+                  <div className="text-[9px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded uppercase font-bold tracking-wider animate-pulse-soft">
+                    CONEXÃO LIVE
+                  </div>
+                </div>
+
+                {/* Conteúdo dos logs */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {dbLogs.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-1">
+                      <span>_ [Convexa.AI API Daemon Online]</span>
+                      <span className="text-[10px]">Aguardando tráfego de requisições da Meta Cloud API...</span>
+                    </div>
+                  ) : (
+                    dbLogs.map((log) => (
+                      <div key={log.id} className="border-b border-slate-900/60 pb-3 last:border-b-0">
+                        <div className="flex items-center justify-between text-[10px] mb-1">
+                          <span className={`font-mono ${
+                            log.type === 'HANDSHAKE_SUCCESS' ? 'text-emerald-400 font-black' :
+                            log.type === 'HANDSHAKE_RECEIVED' ? 'text-blue-400' :
+                            log.type === 'MESSAGE_CALLBACK' ? 'text-sky-400 font-black' :
+                            log.type === 'HANDSHAKE_FAILED' ? 'text-rose-400 font-black' : 'text-slate-400'
+                          }`}>
+                            [{log.type}] {log.details}
+                          </span>
+                          <span className="text-slate-500">
+                            {new Date(log.receivedAt).toLocaleTimeString('pt-BR')}
+                          </span>
+                        </div>
+                        <pre className="bg-slate-900/50 p-2.5 rounded-lg text-[10px] text-slate-400 overflow-x-auto whitespace-pre-wrap select-all border border-slate-900 max-h-32">
+                          {JSON.stringify(log.payload, null, 2)}
+                        </pre>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
