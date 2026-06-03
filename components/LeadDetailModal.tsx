@@ -7,6 +7,7 @@ interface LeadDetailModalProps {
   lead: Lead | null;
   onClose: () => void;
   onDelete?: (id: number) => void;
+  onUpdate?: (lead: Lead) => void;
 }
 
 const LeadDetailModal: React.FC<LeadDetailModalProps> = ({ lead, onClose, onDelete }) => {

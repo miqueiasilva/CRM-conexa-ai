@@ -78,7 +78,7 @@ export async function runChat(prompt: string) {
 }
 
 /* Handle tool responses back to the model */
-export async function sendFunctionResponse(functionResponse: { functionResponses: { name: string; response: object }[] }) {
+export async function sendFunctionResponse(functionResponse: { functionResponses: { name: string; response: Record<string, any> }[] }) {
     if (!chat) {
         throw new Error("Chat not initialized");
     }
